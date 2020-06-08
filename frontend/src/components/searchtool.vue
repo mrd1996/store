@@ -1,51 +1,75 @@
 <template>
-  <v-toolbar dense color="#3c3f57" class="pa-0 rempad tool-color" height="55">
+  <v-row no-gutters="">
+    <v-col cols="9">
+       <v-toolbar dense color="#3c3f57" class="pa-0 rempad tool-color rounded-card3" height="55" flat>
 
-    <v-btn text dark class="text-none drop-btn pl-0"> Your Store
-        <v-icon>mdi-menu-down</v-icon>
-      </v-btn>
+      <v-btn text dark class="text-none drop-btn pl-0"> Your Store
+          <v-icon>mdi-menu-down</v-icon>
+        </v-btn>
 
-      <v-btn text dark class="text-none drop-btn"> Games
-        <v-icon>mdi-menu-down</v-icon>
-      </v-btn>
+        <v-btn text dark class="text-none drop-btn"> Games
+          <v-icon>mdi-menu-down</v-icon>
+        </v-btn>
 
-      <v-btn text dark class="text-none drop-btn"> Software
-        <v-icon>mdi-menu-down</v-icon>
-      </v-btn>
+        <v-btn text dark class="text-none drop-btn"> Software
+          <v-icon>mdi-menu-down</v-icon>
+        </v-btn>
 
-      <v-btn text dark class="text-none drop-btn"> Hardware
-        <v-icon>mdi-menu-down</v-icon>
-      </v-btn>
+        <v-btn text dark class="text-none drop-btn"> Hardware
+          <v-icon>mdi-menu-down</v-icon>
+        </v-btn>
 
-      <v-btn text dark class="text-none drop-btn"> Videos
-        <v-icon>mdi-menu-down</v-icon>
-      </v-btn>
+        <v-btn text dark class="text-none drop-btn"> Videos
+          <v-icon>mdi-menu-down</v-icon>
+        </v-btn>
 
-      <v-btn text dark class="text-none drop-btn"> News
-        <v-icon>mdi-menu-down</v-icon>
-      </v-btn>
+        <v-btn text dark class="text-none drop-btn"> News
+          <v-icon>mdi-menu-down</v-icon>
+        </v-btn>
 
-      <v-spacer></v-spacer>
+        <v-divider vertical></v-divider>
 
-      <v-divider vertical></v-divider>
+        <v-btn text dark class="text-none drop-btn light-blue--text font-weight-bold ml-3">
+          <v-icon left >mdi-star-outline</v-icon> Wishlist
+        </v-btn>
 
-      <v-row class="text-clr" align="center">
-        <v-text-field
-              class="ml-2 input-pad"
-              hide-details
-              placeholder="Search"
-              dark
-              color="#313249"
-              flat
-              height="55"
-        ></v-text-field>
+        <!-- <v-row class="text-clr ml-3" align="center"> -->
+          <!-- <v-text-field
+                class="ml-2 input-pad"
+                hide-details
+                placeholder="Search"
+                dark
+                flat
+                height="55"
+          ></v-text-field>
 
-       <v-btn icon dark>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
+          <v-btn icon dark>
+            <v-icon>mdi-magnify</v-icon>
+          </v-btn> -->
+        <!-- </v-row> -->
+
+    </v-toolbar>
+    </v-col>
+    <v-col cols="3">
+      <v-row class="text-clr" align="center" no-gutters="">
+         <v-text-field
+                class="input-pad"
+                hide-details
+                placeholder="Search"
+                dark
+                flat
+                filled
+                background-color="#313249"
+          ></v-text-field>
+
+          <v-btn icon dark>
+            <v-icon>mdi-magnify</v-icon>
+          </v-btn>
       </v-row>
 
-  </v-toolbar>
+    </v-col>
+  </v-row>
+
 </template>
 
 
@@ -96,7 +120,8 @@
 }
 
 .tool-color {
-    background: linear-gradient(to right, #3c3f57 0%, #3c3f57 90%, #313249 90%, #313249 100%);
+    background: linear-gradient(to right, #3c3f57 0%, #3c3f57 100%);
+    /* background: linear-gradient(to right, #3c3f57 0%, #3c3f57 90%, #313249 90%, #313249 100%); */
 }
 
 .v-text-field > .v-input__control > .v-input__slot::before {
@@ -105,6 +130,12 @@
 .v-text-field > .v-input__control > .v-input__slot::after {
     border-style: none !important;
 }
+
+.rounded-card3{
+    border-top-left-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
+}
+
 
 
 </style>

@@ -42,33 +42,66 @@
 
 
     <v-content style="background-color: #232537">
-      <v-container>
+      <v-container fluid class="px-12">
         <v-row>
-          <v-col cols="3"></v-col>
-          <v-col cols="9">
-            <v-card color="#3c3f57" class="rounded-card">
+          <v-col cols="2">
+            <Categories/>
+          </v-col>
+          <v-col cols="10">
+            <v-card color="#3c3f57" class="rounded-card" flat>
               <Searchtool/>
             </v-card>
+             <v-card color="#3c3f57" class="rounded-card mt-5" flat>
+               <v-row no-gutters>
+                  <v-col cols="9">
+                  <GameSlider/>
+                </v-col>
+                <v-col cols="3">
+                  <Description/>
+                </v-col>
+               </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row>
+           <v-col cols="2">
+          </v-col>
+            <v-col cols="10">
+               <v-row no-gutters>
+                  <v-col cols="9">
+                    <v-card dark color="transparent d-flex align-center" flat>
+                        <span class="title">Special Offers</span>
+                       <v-btn class="ml-auto text-none pa-0" text depressed  color="light-blue" large="" dark>Browse All <v-icon>mdi-chevron-right</v-icon></v-btn>
+                    </v-card>
+                      <Gallery/>
+
+                </v-col>
+               </v-row>
           </v-col>
         </v-row>
 
 
       </v-container>
-      <HelloWorld/>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
 import Searchtool from "./components/searchtool";
+import Categories from "./components/categories";
+import GameSlider from "./components/gameslider";
+import Description from "./components/description";
+import Gallery from "./components/gallery";
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
-    Searchtool
+    Searchtool,
+    Categories,
+    GameSlider,
+    Description,
+    Gallery
   },
 
   data: () => ({
