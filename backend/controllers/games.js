@@ -29,7 +29,6 @@ Games.getGamesList = async function(){
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         ?g :name ?name.
-        ?g :description ?desc.
         ?g :price ?price.
         ?g :rating ?rating.
         ?g :releaseDate ?rdate.

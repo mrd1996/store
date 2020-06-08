@@ -4,6 +4,13 @@ var path = require('path');
 var logger = require('morgan');
 
 var gamesRouter = require('./routes/games');
+var genresRouter = require('./routes/genres');
+var salesRouter = require('./routes/sales');
+var devsRouter = require('./routes/devs');
+var pubsRouter = require('./routes/pubs');
+
+
+
 
 var app = express();
 
@@ -13,6 +20,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/games', gamesRouter);
+app.use('/genres', genresRouter);
+app.use('/sales', salesRouter);
+app.use('/devs', devsRouter);
+app.use('/pubs', pubsRouter);
+
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

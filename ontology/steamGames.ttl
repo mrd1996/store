@@ -1,0 +1,210 @@
+@prefix : <http://prc.di.uminho.pt/steamGames#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://prc.di.uminho.pt/steamGames> .
+
+<http://prc.di.uminho.pt/steamGames> rdf:type owl:Ontology .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://prc.di.uminho.pt/steamGames#hasCategory
+:hasCategory rdf:type owl:ObjectProperty ;
+             owl:inverseOf :isCategoryOf ;
+             rdfs:domain :Game ;
+             rdfs:range :Category .
+
+
+###  http://prc.di.uminho.pt/steamGames#hasDeveloper
+:hasDeveloper rdf:type owl:ObjectProperty ;
+              owl:inverseOf :isDeveloperOf ;
+              rdfs:domain :Game ;
+              rdfs:range :Developer .
+
+
+###  http://prc.di.uminho.pt/steamGames#hasGenre
+:hasGenre rdf:type owl:ObjectProperty ;
+          owl:inverseOf :isGenreOf ;
+          rdfs:domain :Game ;
+          rdfs:range :Genre .
+
+
+###  http://prc.di.uminho.pt/steamGames#hasPlatform
+:hasPlatform rdf:type owl:ObjectProperty ;
+             owl:inverseOf :isPlatformOf ;
+             rdfs:domain :Game ;
+             rdfs:range :Platform .
+
+
+###  http://prc.di.uminho.pt/steamGames#hasPublisher
+:hasPublisher rdf:type owl:ObjectProperty ;
+              owl:inverseOf :isPublisherOf ;
+              rdfs:domain :Game ;
+              rdfs:range :Publisher .
+
+
+###  http://prc.di.uminho.pt/steamGames#hasSale
+:hasSale rdf:type owl:ObjectProperty ;
+         owl:inverseOf :isSaleOf ;
+         rdfs:domain :Game ;
+         rdfs:range :Sale .
+
+
+###  http://prc.di.uminho.pt/steamGames#isCategoryOf
+:isCategoryOf rdf:type owl:ObjectProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#isDeveloperOf
+:isDeveloperOf rdf:type owl:ObjectProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#isGenreOf
+:isGenreOf rdf:type owl:ObjectProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#isPlatformOf
+:isPlatformOf rdf:type owl:ObjectProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#isPublisherOf
+:isPublisherOf rdf:type owl:ObjectProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#isSaleOf
+:isSaleOf rdf:type owl:ObjectProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#ownedBy
+:ownedBy rdf:type owl:ObjectProperty ;
+         owl:inverseOf :owns .
+
+
+###  http://prc.di.uminho.pt/steamGames#owns
+:owns rdf:type owl:ObjectProperty ;
+      rdfs:domain :User ;
+      rdfs:range :Game .
+
+
+###  http://prc.di.uminho.pt/steamGames#wishedBy
+:wishedBy rdf:type owl:ObjectProperty ;
+          owl:inverseOf :wishes .
+
+
+###  http://prc.di.uminho.pt/steamGames#wishes
+:wishes rdf:type owl:ObjectProperty ;
+        rdfs:domain :User ;
+        rdfs:range :Game .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://prc.di.uminho.pt/steamGames#discount
+:discount rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#email
+:email rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#name
+:name rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#password
+:password rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#salePrice
+:salePrice rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#username
+:username rdf:type owl:DatatypeProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://prc.di.uminho.pt/steamGames#Category
+:Category rdf:type owl:Class .
+
+
+###  http://prc.di.uminho.pt/steamGames#Company
+:Company rdf:type owl:Class .
+
+
+###  http://prc.di.uminho.pt/steamGames#Developer
+:Developer rdf:type owl:Class ;
+           rdfs:subClassOf :Company .
+
+
+###  http://prc.di.uminho.pt/steamGames#Game
+:Game rdf:type owl:Class .
+
+
+###  http://prc.di.uminho.pt/steamGames#Genre
+:Genre rdf:type owl:Class .
+
+
+###  http://prc.di.uminho.pt/steamGames#Platform
+:Platform rdf:type owl:Class .
+
+
+###  http://prc.di.uminho.pt/steamGames#Publisher
+:Publisher rdf:type owl:Class ;
+           rdfs:subClassOf :Company .
+
+
+###  http://prc.di.uminho.pt/steamGames#Sale
+:Sale rdf:type owl:Class .
+
+
+###  http://prc.di.uminho.pt/steamGames#User
+:User rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://prc.di.uminho.pt/steamGames#plt_linux
+:plt_linux rdf:type owl:NamedIndividual ,
+                    :Platform ;
+           :name "Linux"^^xsd:string .
+
+
+###  http://prc.di.uminho.pt/steamGames#plt_mac
+:plt_mac rdf:type owl:NamedIndividual ,
+                  :Platform ;
+         :name "MacOS"^^xsd:string .
+
+
+###  http://prc.di.uminho.pt/steamGames#plt_windows
+:plt_windows rdf:type owl:NamedIndividual ,
+                      :Platform ;
+             :name "Windows"^^xsd:string .
+
+
+###  http://prc.di.uminho.pt/steamGames#tiagovski
+:tiagovski rdf:type owl:NamedIndividual ,
+                    :User ;
+           :email "tiag@email.pt"^^xsd:string ;
+           :password "lol"^^xsd:string ;
+           :username "tiagovski"^^xsd:string .
+
+
+###  http://prc.di.uminho.pt/steamGames#today_sale
+:today_sale rdf:type owl:NamedIndividual ,
+                     :Sale ;
+            :discount "30"^^xsd:string ;
+            :salePrice "1.0"^^xsd:float .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
