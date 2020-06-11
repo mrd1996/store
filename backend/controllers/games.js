@@ -24,7 +24,9 @@ var getLink = "http://localhost:7200/repositories/test" + "?query="
 
 
 Games.getGamesList = async function(limit = 25, page = 0){
-    if (page-- == -1) page = 0;
+    page-=1;
+    if (page == -1) page = 0;
+
     var query = `select ?id ?name ?desc ?price ?rating ?rdate ?salePrice ?discount where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).

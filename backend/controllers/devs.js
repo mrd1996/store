@@ -7,7 +7,7 @@ function normalize(r){
         for (let [k, v] of Object.entries(o)) {
             novo[k] = v.value
           }
-        return novo  
+        return novo
     })
 }
 
@@ -20,14 +20,18 @@ var prefixes = `
     PREFIX : <http://prc.di.uminho.pt/steamGames#>
 `
 
-var getLink = "http://localhost:7200/repositories/test" + "?query=" 
+var getLink = "http://localhost:7200/repositories/test" + "?query="
 
-Devs.getDevsList = async function(){
-    
+Devs.getDevsList = async function(limit = 25, page = 0){
+    page-=1;
+    if (page == -1) page = 0;
     var query = `select ?dev where {
         ?d a :Developer.
-        ?d :name ?dev.	
-}` 
+        ?d :name ?dev.
+}
+  limit ${limit}
+  offset ${page*limit}
+`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -36,26 +40,26 @@ Devs.getDevsList = async function(){
     }
     catch(e){
         throw(e)
-    } 
+    }
 }
 
 Devs.getDevGames = async function(idDev){
-    
+
     var query = `select ?dev ?name ?price ?rating ?rdate ?salePrice ?discount where {
         ?d a :Developer.
         bind(strafter(str(?d), 'steamGames#') AS ?dev).
-    	FILTER(?dev = "${idDev}").
-    	?d :isDeveloperOf ?g.
+        FILTER(?dev = "${idDev}").
+        ?d :isDeveloperOf ?g.
         ?g :name ?name.
         ?g :price ?price.
         ?g :rating ?rating.
         ?g :releaseDate ?rdate.
     optional{
         ?g :hasSale ?sale.
-     	?sale :salePrice ?salePrice.
-        ?sale :discount ?discount.   
-    } 
-}` 
+         ?sale :salePrice ?salePrice.
+        ?sale :discount ?discount.
+    }
+}`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -64,5 +68,5 @@ Devs.getDevGames = async function(idDev){
     }
     catch(e){
         throw(e)
-    } 
+    }
 }

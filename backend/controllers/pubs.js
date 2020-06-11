@@ -7,7 +7,7 @@ function normalize(r){
         for (let [k, v] of Object.entries(o)) {
             novo[k] = v.value
           }
-        return novo  
+        return novo
     })
 }
 
@@ -20,14 +20,18 @@ var prefixes = `
     PREFIX : <http://prc.di.uminho.pt/steamGames#>
 `
 
-var getLink = "http://localhost:7200/repositories/test" + "?query=" 
+var getLink = "http://localhost:7200/repositories/test" + "?query="
 
-Pubs.getPubsList = async function(){
-    
+Pubs.getPubsList = async function(limit = 25, page = 0){
+    page-=1;
+    if (page == -1) page = 0;
     var query = `select ?pub where {
         ?p a :Publisher.
-        ?p :name ?pub.	
-}` 
+        ?p :name ?pub.
+}
+ limit ${limit}
+  offset ${page*limit}
+`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -36,11 +40,11 @@ Pubs.getPubsList = async function(){
     }
     catch(e){
         throw(e)
-    } 
+    }
 }
 
 Pubs.getPubGames = async function(idPub){
-    
+
     var query = `select ?pub ?name ?price ?rating ?rdate ?salePrice ?discount where {
         ?p a :Publisher.
         bind(strafter(str(?p), 'steamGames#') AS ?pub).
@@ -53,9 +57,9 @@ Pubs.getPubGames = async function(idPub){
     optional{
         ?g :hasSale ?sale.
      	?sale :salePrice ?salePrice.
-        ?sale :discount ?discount.   
-    } 
-}` 
+        ?sale :discount ?discount.
+    }
+}`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -64,5 +68,5 @@ Pubs.getPubGames = async function(idPub){
     }
     catch(e){
         throw(e)
-    } 
+    }
 }
