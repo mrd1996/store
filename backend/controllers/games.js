@@ -7,7 +7,7 @@ function normalize(r){
         for (let [k, v] of Object.entries(o)) {
             novo[k] = v.value
           }
-        return novo  
+        return novo
     })
 }
 
@@ -20,11 +20,11 @@ var prefixes = `
     PREFIX : <http://prc.di.uminho.pt/steamGames#>
 `
 
-var getLink = "http://localhost:7200/repositories/test" + "?query=" 
+var getLink = "http://localhost:7200/repositories/test" + "?query="
 
 
-Games.getGamesList = async function(){
-    
+Games.getGamesList = async function(limit = 25, page = 0){
+    if (page-- == -1) page = 0;
     var query = `select ?id ?name ?desc ?price ?rating ?rdate ?salePrice ?discount where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
@@ -37,7 +37,10 @@ Games.getGamesList = async function(){
         ?sale :salePrice ?salePrice.
         ?sale :discount ?discount.
     }
-}` 
+}
+  orderby DESC(?rdate)
+  limit ${limit}
+  offset ${page*limit}`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -46,7 +49,7 @@ Games.getGamesList = async function(){
     }
     catch(e){
         throw(e)
-    } 
+    }
 }
 
 Games.getGameCategories = async function(idGame){
@@ -56,7 +59,7 @@ Games.getGameCategories = async function(idGame){
         FILTER(?id = "${idGame}").
         ?g :hasCategory ?cat.
         ?cat :name ?category.
-    }` 
+    }`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -75,7 +78,7 @@ Games.getGameGenres = async function(idGame){
         FILTER(?id = "${idGame}").
         ?g :hasGenre ?gen.
         ?gen :name ?genres.
-    }` 
+    }`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -95,7 +98,7 @@ Games.getGamePlatforms = async function(idGame){
         FILTER(?id = "${idGame}").
         ?g :hasPlatform ?plt.
         ?plt :name ?platforms.
-    }` 
+    }`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -115,7 +118,7 @@ Games.getGameDevs = async function(idGame){
         FILTER(?id = "${idGame}").
         ?g :hasDeveloper ?dev.
         ?dev :name ?devs.
-    }` 
+    }`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -134,7 +137,7 @@ Games.getGamePubs = async function(idGame){
         FILTER(?id = "${idGame}").
         ?g :hasPublisher ?pub.
         ?pub :name ?pubs.
-    }` 
+    }`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -156,7 +159,7 @@ Games.getGameSale = async function(idGame){
         ?sale :salePrice ?salePrice.
         ?sale :discount ?discount.
     }
-}` 
+}`
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -184,9 +187,9 @@ Games.getGameAtomic = async function(idGame){
             ?g :image ?image.
         }
         optional {
-            ?g :website ?site. 
-        }   
-    }` 
+            ?g :website ?site.
+        }
+    }`
     var encoded = encodeURIComponent(prefixes + query)
     try{
         var response = await axios.get(getLink + encoded)
@@ -194,7 +197,7 @@ Games.getGameAtomic = async function(idGame){
     }
     catch(e){
         throw(e)
-    } 
+    }
 }
 
 Games.getGame = async function(idGame){

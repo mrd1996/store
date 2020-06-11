@@ -4,7 +4,7 @@ var Games = require("../controllers/games")
 
 
 router.get('/', function(req, res) {
-  Games.getGamesList()
+  Games.getGamesList(req.query.limit, req.query.page)
     .then(dados => res.jsonp(dados))
     .catch(e => res.status(500).send(`Erro na listagem de jogos: ${e}`))
 });
