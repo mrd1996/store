@@ -11,6 +11,21 @@ function normalize(r){
     })
 }
 
+async function getTotalGames() {
+    var query = `select (count(*) as ?total) where {
+        ?g a :Game.
+    }`
+    var encoded = encodeURIComponent(prefixes + query)
+
+    try{
+        var response = await axios.get(getLink + encoded)
+        return Number(normalize(response.data)[0].total);
+    }
+    catch(e){
+        throw(e)
+    }
+}
+
 var prefixes = `
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -27,13 +42,14 @@ Games.getGamesList = async function(limit = 25, page = 0){
     page-=1;
     if (page == -1) page = 0;
 
-    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?salePrice ?discount where {
+    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?salePrice ?discount ?image where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         ?g :name ?name.
         ?g :price ?price.
         ?g :rating ?rating.
         ?g :releaseDate ?rdate.
+        ?g :image ?image
     optional {
         ?g :hasSale ?sale.
         ?sale :salePrice ?salePrice.
@@ -47,7 +63,8 @@ Games.getGamesList = async function(limit = 25, page = 0){
 
     try{
         var response = await axios.get(getLink + encoded)
-        return normalize(response.data)
+        let total = await getTotalGames();
+        return {total, data: normalize(response.data)}
     }
     catch(e){
         throw(e)

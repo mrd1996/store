@@ -9,9 +9,21 @@ var salesRouter = require('./routes/sales');
 var devsRouter = require('./routes/devs');
 var pubsRouter = require('./routes/pubs');
 var usersRouter = require('./routes/users');
+var cors = require("cors");
 
 
 var app = express();
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:8080",
+      "http://localhost:8081",
+    ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true
+  })
+);
 
 app.use(logger('dev'));
 app.use(express.json());

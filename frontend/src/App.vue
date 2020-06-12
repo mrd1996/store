@@ -74,7 +74,6 @@
                        <v-btn class="ml-auto text-none pa-0" text depressed  color="light-blue" large="" dark>Browse All <v-icon>mdi-chevron-right</v-icon></v-btn>
                     </v-card>
                       <Gallery/>
-
                 </v-col>
                </v-row>
           </v-col>
@@ -87,6 +86,8 @@
 </template>
 
 <script>
+/* eslint-disable no-unused-vars */
+/* eslint-disable vue/no-unused-components */
 import Searchtool from "./components/searchtool";
 import Categories from "./components/categories";
 import GameSlider from "./components/gameslider";

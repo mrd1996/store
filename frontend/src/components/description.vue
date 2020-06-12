@@ -110,7 +110,7 @@
                     <v-icon color="#7a7d91" class="ml-2">mdi-apple</v-icon>
                  </div>
                  <v-divider class="mt-5"></v-divider>
-                 <v-card color="#3c3f57" flat class="mt-2 headline d-flex align-center font-weight-medium" height="80%">
+                 <v-card color="transparent" flat class="mt-2 headline d-flex align-center font-weight-medium" height="80%">
                    <div>
                    <span class="subtitle-1 light-green--text font-weight-regular mr-3">-33%</span> 24,55€
                    </div>
