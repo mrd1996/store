@@ -24,10 +24,11 @@ var getLink = "http://localhost:7200/repositories/test" + "?query="
 
 var postLink = "http://localhost:7200/repositories/test/statements" + "?update=" 
 
-Users.getUser = async function(email){
-    var query = `select ?username ?password where {
+Users.getUser = async function(id){
+    var query = `select ?email ?username ?password where {
         ?u a :User.
-        ?u :email "${email}".
+    	?u :id "${id}".
+        ?u :email ?email.
         ?u :password ?password.
         ?u :username ?username.
     }` 
@@ -41,12 +42,13 @@ Users.getUser = async function(email){
     } 
 }
 
-Users.getUserByName = async function(username){
-    var query = `select ?email ?password where {
+Users.getUserByEmail = async function(email){
+    var query = `select ?id ?username ?password where {
         ?u a :User.
-        ?u :username "${username}".
-        ?u :email ?email.
+        ?u :email "${email}".
+    	?u :username ?username.
         ?u :password ?password.
+    	?u :id ?id.
 }` 
     var encoded = encodeURIComponent(prefixes + query)
     try{
@@ -58,11 +60,102 @@ Users.getUserByName = async function(username){
     } 
 }
 
+Users.getUserWishlist = async function(id){
+    var query = `select ?wish where {
+        ?u a :User.
+    	?u :id "${id}".
+    	?u :wishes ?g.
+    	bind(strafter(str(?g), 'steamGames#') AS ?wish).
+}` 
+    var encoded = encodeURIComponent(prefixes + query)
+    try{
+        var response = await axios.get(getLink + encoded)
+        return normalize(response.data)
+    }
+    catch(e){
+        throw(e)
+    } 
+}
+
+Users.getUserLibrary = async function(id){
+    var query = `select ?lib where {
+        ?u a :User.
+    	?u :id "${id}".
+    	?u :owns ?g.
+    	bind(strafter(str(?g), 'steamGames#') AS ?lib).
+}` 
+    var encoded = encodeURIComponent(prefixes + query)
+    try{
+        var response = await axios.get(getLink + encoded)
+        return normalize(response.data)
+    }
+    catch(e){
+        throw(e)
+    } 
+}
+
+Users.insertWishlist = async function(id,game){
+    var query = `INSERT DATA
+    {
+       :u_${id} :wishes <http://prc.di.uminho.pt/steamGames#${game}>.
+    }` 
+    var encoded = encodeURIComponent(prefixes + query)
+    try{
+        await axios.post(postLink + encoded)
+    }
+    catch(e){
+        throw(e)
+    } 
+}
+
+Users.removeWishlist = async function(id,game){
+    var query = `DELETE WHERE
+    {
+       :u_${id} :wishes <http://prc.di.uminho.pt/steamGames#${game}>.
+    }` 
+    var encoded = encodeURIComponent(prefixes + query)
+    try{
+        await axios.post(postLink + encoded)
+    }
+    catch(e){
+        throw(e)
+    } 
+}
+
+Users.insertLibrary = async function(id,game){
+    var query = `INSERT DATA
+    {
+       :u_${id} :owns <http://prc.di.uminho.pt/steamGames#${game}>.
+    }` 
+    var encoded = encodeURIComponent(prefixes + query)
+    try{
+        await axios.post(postLink + encoded)
+    }
+    catch(e){
+        throw(e)
+    } 
+}
+
+Users.removeLibrary = async function(id,game){
+    var query = `DELETE WHERE
+    {
+       :u_${id} :owns <http://prc.di.uminho.pt/steamGames#${game}>.
+    }` 
+    var encoded = encodeURIComponent(prefixes + query)
+    try{
+        await axios.post(postLink + encoded)
+    }
+    catch(e){
+        throw(e)
+    } 
+}
+
 Users.insert = async function(user){
     var query = `INSERT DATA
     {
-       :${user.username} rdf:type owl:NamedIndividual;
+       :u_${user.id} rdf:type owl:NamedIndividual;
                    rdf:type :User;
+                   :id "${user.id}" ;
                    :email "${user.email}" ; 
                    :password "${user.password}" ; 
                    :username "${user.username}" .
