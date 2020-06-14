@@ -61,11 +61,62 @@ Users.getUserByEmail = async function(email){
 }
 
 Users.getUserWishlist = async function(id){
-    var query = `select ?wish where {
+    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?u a :User.
     	?u :id "${id}".
-    	?u :wishes ?g.
-    	bind(strafter(str(?g), 'steamGames#') AS ?wish).
+        ?u :wishes ?g.
+        bind(strafter(str(?g), 'steamGames#') AS ?id).
+        ?g :name ?name.
+        ?g :description ?desc.
+        ?g :price ?price.
+        ?g :rating ?rating.
+        ?g :releaseDate ?rdate.
+        ?g :achievements ?trophys.
+        ?g :averagePlaytime ?avgPlayTime.
+        optional {
+            ?g :image ?image.
+        }
+        optional {
+            ?g :website ?site.
+        }
+    optional {
+        ?g :hasSale ?sale.
+        ?sale :salePrice ?salePrice.
+        ?sale :discount ?discount.
+    }
+}` 
+    var encoded = encodeURIComponent(prefixes + query)
+    try{
+        var response = await axios.get(getLink + encoded)
+        return normalize(response.data)
+    }
+    catch(e){
+        throw(e)
+    } 
+}
+
+Users.getWishlistSales = async function(id){
+    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
+        ?u a :User.
+    	?u :id "${id}".
+        ?u :wishes ?g.
+        bind(strafter(str(?g), 'steamGames#') AS ?id).
+        ?g :name ?name.
+        ?g :description ?desc.
+        ?g :price ?price.
+        ?g :rating ?rating.
+        ?g :releaseDate ?rdate.
+        ?g :achievements ?trophys.
+        ?g :averagePlaytime ?avgPlayTime.
+        optional {
+            ?g :image ?image.
+        }
+        optional {
+            ?g :website ?site.
+        }
+        ?g :hasSale ?sale.
+        ?sale :salePrice ?salePrice.
+        ?sale :discount ?discount.
 }` 
     var encoded = encodeURIComponent(prefixes + query)
     try{
@@ -78,11 +129,29 @@ Users.getUserWishlist = async function(id){
 }
 
 Users.getUserLibrary = async function(id){
-    var query = `select ?lib where {
+    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?u a :User.
     	?u :id "${id}".
     	?u :owns ?g.
-    	bind(strafter(str(?g), 'steamGames#') AS ?lib).
+    	bind(strafter(str(?g), 'steamGames#') AS ?id).
+        ?g :name ?name.
+        ?g :description ?desc.
+        ?g :price ?price.
+        ?g :rating ?rating.
+        ?g :releaseDate ?rdate.
+        ?g :achievements ?trophys.
+        ?g :averagePlaytime ?avgPlayTime.
+        optional {
+            ?g :image ?image.
+        }
+        optional {
+            ?g :website ?site.
+        }
+    optional {
+        ?g :hasSale ?sale.
+        ?sale :salePrice ?salePrice.
+        ?sale :discount ?discount.
+    }
 }` 
     var encoded = encodeURIComponent(prefixes + query)
     try{

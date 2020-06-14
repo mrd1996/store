@@ -11,26 +11,32 @@ const { verifyToken } = require('../middleware/auth')
 const privateKey = fs.readFileSync('./keys/private.key', 'utf8')
 
 // GET USER BY ID
-router.get('/:id', function(req, res) {
+router.get('/:id', function(req, res) {  
     Users.getUser(req.params.id)
       .then(dados => res.jsonp(dados))
       .catch(e => res.status(500).send(`Erro na listagem do user ${req.params.id}: ${e}`))
   });
   
-// GET USER WISHLIST
+// GET USER WISHLIST GAMES
 router.get('/:id/wishlist', function(req, res) {
   Users.getUserWishlist(req.params.id)
     .then(dados => res.jsonp(dados))
     .catch(e => res.status(500).send(`Erro na listagem do user ${req.params.id}: ${e}`))
 });
 
-// GET USER LIBRARY
+// GET USER WISHLIST GAMES IN SALE
+router.get('/:id/wishlist/sales', function(req, res) {
+  Users.getWishlistSales(req.params.id)
+    .then(dados => res.jsonp(dados))
+    .catch(e => res.status(500).send(`Erro na listagem do user ${req.params.id}: ${e}`))
+});
+
+// GET USER LIBRARY GAMES
 router.get('/:id/library', function(req, res) {
   Users.getUserLibrary(req.params.id)
     .then(dados => res.jsonp(dados))
     .catch(e => res.status(500).send(`Erro na listagem do user ${req.params.id}: ${e}`))
 });
-
 
 // POST GAMES IN WISHLISH
 router.post('/:id/wishlist', async (req, res) => {
@@ -119,7 +125,6 @@ router.post('/login', (req, res) => {
               res.status(401).send({ status: "Authentication failed" })
             } else {
               if (isMatch) {
-  
                 const uid = user[0].id
                 jwt.sign({
                   id: user[0].id
@@ -132,7 +137,6 @@ router.post('/login', (req, res) => {
                 res.status(401).send({ status: "Authentication failed" })
               }
             }
-  
           })
         } else {
           res.status(401).send({ status: "Authentication failed" })
