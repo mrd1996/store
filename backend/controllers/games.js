@@ -42,14 +42,20 @@ Games.getGamesList = async function(limit = 25, page = 0){
     page-=1;
     if (page == -1) page = 0;
 
-    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?salePrice ?discount ?image where {
+    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site ?salePrice ?discount where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         ?g :name ?name.
+        ?g :description ?desc.
         ?g :price ?price.
         ?g :rating ?rating.
         ?g :releaseDate ?rdate.
-        ?g :image ?image
+        ?g :image ?image.
+        ?g :achievements ?trophys.
+        ?g :averagePlaytime ?avgPlayTime.
+        optional {
+            ?g :website ?site.
+        }
     optional {
         ?g :hasSale ?sale.
         ?sale :salePrice ?salePrice.

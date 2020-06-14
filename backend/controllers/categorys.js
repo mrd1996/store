@@ -1,4 +1,4 @@
-var Pubs = module.exports
+var Categorys = module.exports
 const axios = require('axios')
 
 function normalize(r){
@@ -7,7 +7,7 @@ function normalize(r){
         for (let [k, v] of Object.entries(o)) {
             novo[k] = v.value
           }
-        return novo
+        return novo  
     })
 }
 
@@ -20,18 +20,14 @@ var prefixes = `
     PREFIX : <http://prc.di.uminho.pt/steamGames#>
 `
 
-var getLink = "http://localhost:7200/repositories/test" + "?query="
+var getLink = "http://localhost:7200/repositories/test" + "?query=" 
 
-Pubs.getPubsList = async function(limit = 25, page = 0){
-    page-=1;
-    if (page == -1) page = 0;
-    var query = `select ?pub where {
-        ?p a :Publisher.
-        ?p :name ?pub.
-}
- limit ${limit}
-  offset ${page*limit}
-`
+Categorys.getCatList = async function(){
+    
+    var query = `select ?categ where {
+        ?g a :Category.
+        ?g :name ?categ.	
+    }` 
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -40,16 +36,17 @@ Pubs.getPubsList = async function(limit = 25, page = 0){
     }
     catch(e){
         throw(e)
-    }
+    } 
 }
 
-Pubs.getPubGames = async function(idPub){
-
-    var query = `select ?pub ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
-        ?p a :Publisher.
-        bind(strafter(str(?p), 'steamGames#') AS ?pub).
-    	FILTER(?pub = "${idPub}").
-    	?p :isPublisherOf ?g.
+Categorys.getCategGames = async function(idCateg){
+    
+    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
+        ?g a :Game.
+    	?g :hasCategory ?categ.
+    	bind(strafter(str(?categ), 'steamGames#') AS ?catId).
+        FILTER(?catId = "${idCateg}").
+        bind(strafter(str(?g), 'steamGames#') AS ?id).
         ?g :name ?name.
         ?g :description ?desc.
         ?g :price ?price.
@@ -63,12 +60,12 @@ Pubs.getPubGames = async function(idPub){
         optional {
             ?g :website ?site.
         }
-    optional{
+    optional {
         ?g :hasSale ?sale.
-     	?sale :salePrice ?salePrice.
+        ?sale :salePrice ?salePrice.
         ?sale :discount ?discount.
     }
-}`
+}` 
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -77,5 +74,5 @@ Pubs.getPubGames = async function(idPub){
     }
     catch(e){
         throw(e)
-    }
+    } 
 }

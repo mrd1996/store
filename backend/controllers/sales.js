@@ -1,4 +1,4 @@
-var Genres = module.exports
+var Sales = module.exports
 const axios = require('axios')
 
 function normalize(r){
@@ -22,18 +22,27 @@ var prefixes = `
 
 var getLink = "http://localhost:7200/repositories/test" + "?query=" 
 
-Genres.getSaleGames = async function(){
+Sales.getSaleGames = async function(){
     
-    var query = `select ?id ?name ?price ?rating ?rdate ?salePrice ?discount where {
+    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?s a :Sale.
     	?s :isSaleOf ?g.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         ?g :name ?name.
+        ?g :description ?desc.
         ?g :price ?price.
         ?g :rating ?rating.
         ?g :releaseDate ?rdate.
+        ?g :achievements ?trophys.
+        ?g :averagePlaytime ?avgPlayTime.
         ?sale :salePrice ?salePrice.
         ?sale :discount ?discount.
+        optional {
+            ?g :image ?image.
+        }
+        optional {
+            ?g :website ?site.
+        } 
 }` 
     var encoded = encodeURIComponent(prefixes + query)
 

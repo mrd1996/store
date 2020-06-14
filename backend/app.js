@@ -9,6 +9,7 @@ var salesRouter = require('./routes/sales');
 var devsRouter = require('./routes/devs');
 var pubsRouter = require('./routes/pubs');
 var usersRouter = require('./routes/users');
+var categRouter = require('./routes/categorys');
 var cors = require("cors");
 
 
@@ -36,6 +37,7 @@ app.use('/sales', salesRouter);
 app.use('/devs', devsRouter);
 app.use('/pubs', pubsRouter);
 app.use('/users', usersRouter);
+app.use('/categorys', categRouter);
 
 
 // catch 404 and forward to error handler

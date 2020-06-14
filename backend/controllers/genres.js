@@ -42,16 +42,25 @@ Genres.getGenreList = async function(){
 
 Genres.getGenreGames = async function(idGenre){
     
-    var query = `select ?id ?name ?price ?rating ?rdate ?salePrice ?discount where {
+    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?g a :Game.
     	?g :hasGenre ?gen.
     	bind(strafter(str(?gen), 'steamGames#') AS ?genId).
         FILTER(?genId = "${idGenre}").
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         ?g :name ?name.
+        ?g :description ?desc.
         ?g :price ?price.
         ?g :rating ?rating.
         ?g :releaseDate ?rdate.
+        ?g :achievements ?trophys.
+        ?g :averagePlaytime ?avgPlayTime.
+        optional {
+            ?g :image ?image.
+        }
+        optional {
+            ?g :website ?site.
+        }
     optional {
         ?g :hasSale ?sale.
         ?sale :salePrice ?salePrice.

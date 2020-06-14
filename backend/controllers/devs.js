@@ -45,15 +45,24 @@ Devs.getDevsList = async function(limit = 25, page = 0){
 
 Devs.getDevGames = async function(idDev){
 
-    var query = `select ?dev ?name ?price ?rating ?rdate ?salePrice ?discount where {
+    var query = `select ?dev ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?d a :Developer.
         bind(strafter(str(?d), 'steamGames#') AS ?dev).
         FILTER(?dev = "${idDev}").
         ?d :isDeveloperOf ?g.
         ?g :name ?name.
+        ?g :description ?desc.
         ?g :price ?price.
         ?g :rating ?rating.
         ?g :releaseDate ?rdate.
+        ?g :achievements ?trophys.
+        ?g :averagePlaytime ?avgPlayTime.
+        optional {
+            ?g :image ?image.
+        }
+        optional {
+            ?g :website ?site.
+        }
     optional{
         ?g :hasSale ?sale.
          ?sale :salePrice ?salePrice.
