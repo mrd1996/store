@@ -1,5 +1,6 @@
 var Games = module.exports
 const axios = require('axios')
+var Users = require("../controllers/users")
 
 function normalize(r) {
     return r.results.bindings.map(o => {
@@ -48,7 +49,7 @@ var prefixes = `
 var getLink = "http://localhost:7200/repositories/test" + "?query="
 
 
-Games.getGamesList = async function (limit = 25, page = 0) {
+Games.getGamesList = async function (limit = 25, page = 0, userId) {
     page -= 1;
     if (page == -1) page = 0;
 
@@ -75,12 +76,34 @@ Games.getGamesList = async function (limit = 25, page = 0) {
   orderby DESC(?rdate)
   limit ${limit}
   offset ${page * limit}`
+
     var encoded = encodeURIComponent(prefixes + query)
 
     try {
         var response = await axios.get(getLink + encoded)
+
+        var gameList = normalize(response.data)
+        var lib = await Users.getUserLibrary(userId)
+        var wish = await Users.getUserWishlist(userId)
+        var libGames = []
+        var wishGames = []
+
+        for(game of lib)
+            libGames.push(game.id)
+                    
+        for(game of wish)
+            wishGames.push(game.id)
+
+        for (var i = 0; i < gameList.length; i++) {
+            if (libGames.includes(gameList[i].id)) 
+              gameList[i].inLibrary = "1";
+              
+            if (wishGames.includes(gameList[i].id)) 
+              gameList[i].inWishlist = "1";            
+        }
+        
         let total = await getTotalGames();
-        return { total, data: normalize(response.data) }
+        return { total, data: gameList }
     }
     catch (e) {
         throw (e)

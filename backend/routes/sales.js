@@ -4,8 +4,10 @@ var Sales = require("../controllers/sales")
 var Games = require("../controllers/games")
 var { PythonShell } = require('python-shell')
 
-router.get('/', function (req, res) {
-  Sales.getSaleGames()
+const { verifyToken } = require('../middleware/auth')
+
+router.get('/', verifyToken, function (req, res) {
+  Sales.getSaleGames(req.userId)
     .then(dados => res.jsonp(dados))
     .catch(e => res.status(500).send(`Erro na listagem de jogos da sale: ${e}`))
 });

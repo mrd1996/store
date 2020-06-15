@@ -1,6 +1,6 @@
 var Sales = module.exports
 const axios = require('axios')
-
+var Users = require("../controllers/users")
 
 function normalize(r) {
     return r.results.bindings.map(o => {
@@ -25,7 +25,7 @@ var getLink = "http://localhost:7200/repositories/test" + "?query="
 var postLink = "http://localhost:7200/repositories/test/statements" + "?update="
 
 
-Sales.getSaleGames = async function () {
+Sales.getSaleGames = async function (userId) {
 
     var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?s a :Sale.
@@ -51,7 +51,27 @@ Sales.getSaleGames = async function () {
 
     try {
         var response = await axios.get(getLink + encoded)
-        return normalize(response.data)
+
+        var gameList = normalize(response.data)
+        var lib = await Users.getUserLibrary(userId)
+        var wish = await Users.getUserWishlist(userId)
+        var libGames = []
+        var wishGames = []
+
+        for(game of lib)
+            libGames.push(game.id)
+                    
+        for(game of wish)
+            wishGames.push(game.id)
+
+        for (var i = 0; i < gameList.length; i++) {
+            if (libGames.includes(gameList[i].id)) 
+              gameList[i].inLibrary = "1";
+              
+            if (wishGames.includes(gameList[i].id)) 
+              gameList[i].inWishlist = "1";            
+        }
+        return gameList
     }
     catch (e) {
         throw (e)

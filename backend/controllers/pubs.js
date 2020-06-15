@@ -1,5 +1,6 @@
 var Pubs = module.exports
 const axios = require('axios')
+var Users = require("../controllers/users")
 
 function normalize(r){
     return r.results.bindings.map(o => {
@@ -25,8 +26,9 @@ var getLink = "http://localhost:7200/repositories/test" + "?query="
 Pubs.getPubsList = async function(limit = 25, page = 0){
     page-=1;
     if (page == -1) page = 0;
-    var query = `select ?pub where {
+    var query = `select ?id ?pub where {
         ?p a :Publisher.
+        bind(strafter(str(?p), 'steamGames#') AS ?id).
         ?p :name ?pub.
 }
  limit ${limit}
@@ -43,14 +45,15 @@ Pubs.getPubsList = async function(limit = 25, page = 0){
     }
 }
 
-Pubs.getPubGames = async function(idPub){
+Pubs.getPubGames = async function(idPub, userId){
 
-    var query = `select ?pub ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
+    var query = `select ?pub ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?p a :Publisher.
         bind(strafter(str(?p), 'steamGames#') AS ?pub).
     	FILTER(?pub = "${idPub}").
     	?p :isPublisherOf ?g.
         ?g :name ?name.
+        bind(strafter(str(?g), 'steamGames#') AS ?id).
         ?g :description ?desc.
         ?g :price ?price.
         ?g :rating ?rating.
@@ -73,7 +76,27 @@ Pubs.getPubGames = async function(idPub){
 
     try{
         var response = await axios.get(getLink + encoded)
-        return normalize(response.data)
+        
+        var gameList = normalize(response.data)
+        var lib = await Users.getUserLibrary(userId)
+        var wish = await Users.getUserWishlist(userId)
+        var libGames = []
+        var wishGames = []
+
+        for(game of lib)
+            libGames.push(game.id)
+                    
+        for(game of wish)
+            wishGames.push(game.id)
+
+        for (var i = 0; i < gameList.length; i++) {
+            if (libGames.includes(gameList[i].id)) 
+              gameList[i].inLibrary = "1";
+              
+            if (wishGames.includes(gameList[i].id)) 
+              gameList[i].inWishlist = "1";            
+        }
+        return gameList
     }
     catch(e){
         throw(e)

@@ -2,9 +2,10 @@ var express = require('express');
 var router = express.Router();
 var Games = require("../controllers/games")
 
+const { verifyToken } = require('../middleware/auth')
 
-router.get('/', function (req, res) {
-  Games.getGamesList(req.query.limit, req.query.page)
+router.get('/', verifyToken, function (req, res) {
+  Games.getGamesList(req.query.limit, req.query.page, req.userId)
     .then(dados => res.jsonp(dados))
     .catch(e => res.status(500).send(`Erro na listagem de jogos: ${e}`))
 });
