@@ -77,13 +77,19 @@ Sales.removeSales = async function () {
 
 Sales.insert = async function (game) {
     let appid = Object.keys(game)[0]
-    var query = `INSERT DATA{
+    var query = `
+    DELETE WHERE{
+        :g_${appid} :price ?p
+    }
+    ;
+    INSERT DATA{
         :s_${appid} rdf:type owl:NamedIndividual;
                     rdf:type :Sale;
-                    :salePrice "${game[appid].price}" ;
+                    :salePrice "${game[appid].price.replace("€", "")}"^^xsd:float ;
                     :discount "${game[appid].discount}".
          
          :g_${appid} :hasSale :s_${appid}.
+         :g_${appid} :price "${game[appid].oldprice.replace("€", "")}"^^xsd:float.
  }`
     var encoded = encodeURIComponent(prefixes + query)
     try {
