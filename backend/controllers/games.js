@@ -1,12 +1,22 @@
 var Games = module.exports
 const axios = require('axios')
 
-function normalize(r){
+function normalize(r) {
     return r.results.bindings.map(o => {
         var novo = {}
         for (let [k, v] of Object.entries(o)) {
             novo[k] = v.value
-          }
+        }
+        return novo
+    })
+}
+
+function normalizeID(r) {
+    return r.results.bindings.map(o => {
+        var novo = []
+        for (let [k, v] of Object.entries(o)) {
+            novo += v.value
+        }
         return novo
     })
 }
@@ -17,12 +27,12 @@ async function getTotalGames() {
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
-    try{
+    try {
         var response = await axios.get(getLink + encoded)
         return Number(normalize(response.data)[0].total);
     }
-    catch(e){
-        throw(e)
+    catch (e) {
+        throw (e)
     }
 }
 
@@ -38,8 +48,8 @@ var prefixes = `
 var getLink = "http://localhost:7200/repositories/test" + "?query="
 
 
-Games.getGamesList = async function(limit = 25, page = 0){
-    page-=1;
+Games.getGamesList = async function (limit = 25, page = 0) {
+    page -= 1;
     if (page == -1) page = 0;
 
     var query = `select ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site ?salePrice ?discount where {
@@ -64,20 +74,20 @@ Games.getGamesList = async function(limit = 25, page = 0){
 }
   orderby DESC(?rdate)
   limit ${limit}
-  offset ${page*limit}`
+  offset ${page * limit}`
     var encoded = encodeURIComponent(prefixes + query)
 
-    try{
+    try {
         var response = await axios.get(getLink + encoded)
         let total = await getTotalGames();
-        return {total, data: normalize(response.data)}
+        return { total, data: normalize(response.data) }
     }
-    catch(e){
-        throw(e)
+    catch (e) {
+        throw (e)
     }
 }
 
-Games.getGameCategories = async function(idGame){
+Games.getGameCategories = async function (idGame) {
     var query = `select ?category where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
@@ -87,16 +97,32 @@ Games.getGameCategories = async function(idGame){
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
-    try{
+    try {
         var response = await axios.get(getLink + encoded)
         return normalize(response.data)
     }
-    catch(e){
-        throw(e)
+    catch (e) {
+        throw (e)
     }
 }
 
-Games.getGameGenres = async function(idGame){
+Games.getGamesId = async function () {
+    var query = `select ?id where {
+        ?g a :Game.
+        bind(strafter(str(?g), 'steamGames#g_') AS ?id).
+    }`
+    var encoded = encodeURIComponent(prefixes + query)
+
+    try {
+        var response = await axios.get(getLink + encoded)
+        return normalizeID(response.data)
+    }
+    catch (e) {
+        throw (e)
+    }
+}
+
+Games.getGameGenres = async function (idGame) {
     var query = `select ?genres where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
@@ -106,17 +132,17 @@ Games.getGameGenres = async function(idGame){
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
-    try{
+    try {
         var response = await axios.get(getLink + encoded)
         return normalize(response.data)
     }
-    catch(e){
-        throw(e)
+    catch (e) {
+        throw (e)
     }
 }
 
 
-Games.getGamePlatforms = async function(idGame){
+Games.getGamePlatforms = async function (idGame) {
     var query = `select ?platforms where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
@@ -126,17 +152,17 @@ Games.getGamePlatforms = async function(idGame){
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
-    try{
+    try {
         var response = await axios.get(getLink + encoded)
         return normalize(response.data)
     }
-    catch(e){
-        throw(e)
+    catch (e) {
+        throw (e)
     }
 }
 
 
-Games.getGameDevs = async function(idGame){
+Games.getGameDevs = async function (idGame) {
     var query = `select ?devs where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
@@ -146,16 +172,16 @@ Games.getGameDevs = async function(idGame){
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
-    try{
+    try {
         var response = await axios.get(getLink + encoded)
         return normalize(response.data)
     }
-    catch(e){
-        throw(e)
+    catch (e) {
+        throw (e)
     }
 }
 
-Games.getGamePubs = async function(idGame){
+Games.getGamePubs = async function (idGame) {
     var query = `select ?pubs where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
@@ -165,16 +191,16 @@ Games.getGamePubs = async function(idGame){
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
-    try{
+    try {
         var response = await axios.get(getLink + encoded)
         return normalize(response.data)
     }
-    catch(e){
-        throw(e)
+    catch (e) {
+        throw (e)
     }
 }
 
-Games.getGameSale = async function(idGame){
+Games.getGameSale = async function (idGame) {
     var query = `select ?salePrice ?discount where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
@@ -187,16 +213,16 @@ Games.getGameSale = async function(idGame){
 }`
     var encoded = encodeURIComponent(prefixes + query)
 
-    try{
+    try {
         var response = await axios.get(getLink + encoded)
         return normalize(response.data)
     }
-    catch(e){
-        throw(e)
+    catch (e) {
+        throw (e)
     }
 }
 
-Games.getGameAtomic = async function(idGame){
+Games.getGameAtomic = async function (idGame) {
     var query = `select ?id ?name ?desc ?price ?rating ?rdate ?site ?image ?trophys ?avgPlayTime where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
@@ -216,17 +242,17 @@ Games.getGameAtomic = async function(idGame){
         }
     }`
     var encoded = encodeURIComponent(prefixes + query)
-    try{
+    try {
         var response = await axios.get(getLink + encoded)
         return normalize(response.data)
     }
-    catch(e){
-        throw(e)
+    catch (e) {
+        throw (e)
     }
 }
 
-Games.getGame = async function(idGame){
-    try{
+Games.getGame = async function (idGame) {
+    try {
         var atomic = await Games.getGameAtomic(idGame)
         var categories = await Games.getGameCategories(idGame)
         var genres = await Games.getGameGenres(idGame)
@@ -236,17 +262,17 @@ Games.getGame = async function(idGame){
         var sale = await Games.getGameSale(idGame)
 
         var game = {
-            info : atomic[0],
-            categories : categories,
-            genres : genres,
-            devs : devs,
-            publishers : pubs,
-            platforms : platforms,
-            sale : sale
+            info: atomic[0],
+            categories: categories,
+            genres: genres,
+            devs: devs,
+            publishers: pubs,
+            platforms: platforms,
+            sale: sale
         }
         return game
     }
-    catch(e){
-        throw(e)
+    catch (e) {
+        throw (e)
     }
 }

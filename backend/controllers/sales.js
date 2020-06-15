@@ -1,13 +1,14 @@
 var Sales = module.exports
 const axios = require('axios')
 
-function normalize(r){
+
+function normalize(r) {
     return r.results.bindings.map(o => {
         var novo = {}
         for (let [k, v] of Object.entries(o)) {
             novo[k] = v.value
-          }
-        return novo  
+        }
+        return novo
     })
 }
 
@@ -20,10 +21,12 @@ var prefixes = `
     PREFIX : <http://prc.di.uminho.pt/steamGames#>
 `
 
-var getLink = "http://localhost:7200/repositories/test" + "?query=" 
+var getLink = "http://localhost:7200/repositories/test" + "?query="
+var postLink = "http://localhost:7200/repositories/test/statements" + "?update="
 
-Sales.getSaleGames = async function(){
-    
+
+Sales.getSaleGames = async function () {
+
     var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?s a :Sale.
     	?s :isSaleOf ?g.
@@ -43,14 +46,50 @@ Sales.getSaleGames = async function(){
         optional {
             ?g :website ?site.
         } 
-}` 
+}`
     var encoded = encodeURIComponent(prefixes + query)
 
-    try{
+    try {
         var response = await axios.get(getLink + encoded)
         return normalize(response.data)
     }
-    catch(e){
-        throw(e)
-    } 
+    catch (e) {
+        throw (e)
+    }
+}
+
+Sales.removeSales = async function () {
+    var query = `DELETE WHERE
+    {
+       ?s a :Sale.
+       ?s :isSaleOf ?g.
+       ?g :hasSale ?s.
+
+    }`
+    var encoded = encodeURIComponent(prefixes + query)
+    try {
+        await axios.post(postLink + encoded)
+    }
+    catch (e) {
+        throw (e)
+    }
+}
+
+Sales.insert = async function (game) {
+    let appid = Object.keys(game)[0]
+    var query = `INSERT DATA{
+        :s_${appid} rdf:type owl:NamedIndividual;
+                    rdf:type :Sale;
+                    :salePrice "${game[appid].price}" ;
+                    :discount "${game[appid].discount}".
+         
+         :g_${appid} :hasSale :s_${appid}.
+ }`
+    var encoded = encodeURIComponent(prefixes + query)
+    try {
+        await axios.post(postLink + encoded)
+    }
+    catch (e) {
+        throw (e)
+    }
 }
