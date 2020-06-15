@@ -11,7 +11,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:id', verifyToken, function(req, res) {
-    Pubs.getPubGames(req.params.id, req.userId)
+    Pubs.getPubGames(req.query.limit, req.query.page, req.params.id, req.userId)
       .then(dados => res.jsonp(dados))
       .catch(e => res.status(500).send(`Erro na listagem dos jogos do pub: ${req.params.id}: ${e}`))
 });

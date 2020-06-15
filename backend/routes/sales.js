@@ -7,7 +7,7 @@ var { PythonShell } = require('python-shell')
 const { verifyToken } = require('../middleware/auth')
 
 router.get('/', verifyToken, function (req, res) {
-  Sales.getSaleGames(req.userId)
+  Sales.getSaleGames(req.query.limit, req.query.page, req.userId)
     .then(dados => res.jsonp(dados))
     .catch(e => res.status(500).send(`Erro na listagem de jogos da sale: ${e}`))
 });

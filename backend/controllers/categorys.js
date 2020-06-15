@@ -41,8 +41,28 @@ Categorys.getCatList = async function(){
     } 
 }
 
-Categorys.getCategGames = async function(idCateg, userId){
-    
+async function getTotalGames(idCateg) {
+    var query = `select (count(?g) as ?total) where {
+        ?g a :Game.
+        ?g :hasCategory ?categ.
+        bind(strafter(str(?categ), 'steamGames#') AS ?catId).
+        FILTER(?catId = "${idCateg}").
+}`
+    var encoded = encodeURIComponent(prefixes + query)
+
+    try {
+        var response = await axios.get(getLink + encoded)
+        return Number(normalize(response.data)[0].total);
+    }
+    catch (e) {
+        throw (e)
+    }
+}
+
+Categorys.getCategGames = async function(limit = 25, page = 0, idCateg, userId){
+    page -= 1;
+    if (page == -1) page = 0;
+
     var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?g a :Game.
     	?g :hasCategory ?categ.
@@ -67,7 +87,11 @@ Categorys.getCategGames = async function(idCateg, userId){
         ?sale :salePrice ?salePrice.
         ?sale :discount ?discount.
     }
-}` 
+}
+    orderby DESC(?rdate)
+    limit ${limit}
+    offset ${page * limit}`
+
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -93,7 +117,8 @@ Categorys.getCategGames = async function(idCateg, userId){
               gameList[i].inWishlist = "1";            
         }
 
-        return gameList
+        let total = await getTotalGames(idCateg);
+        return { total, data: gameList }
     }
     catch(e){
         throw(e)

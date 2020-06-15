@@ -11,7 +11,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:id', verifyToken, function(req, res) {
-    Categorys.getCategGames(req.params.id, req.userId)
+    Categorys.getCategGames(req.query.limit, req.query.page, req.params.id, req.userId)
       .then(dados => res.jsonp(dados))
       .catch(e => res.status(500).send(`Erro na listagem dos jogos da categoria: ${req.params.id}: ${e}`))
 });

@@ -42,8 +42,28 @@ Genres.getGenreList = async function(){
     } 
 }
 
-Genres.getGenreGames = async function(idGenre, userId){
-    
+async function getTotalGames(idGenre) {
+    var query = `select (count(?g) as ?total) where {
+        ?g a :Game.
+    	?g :hasGenre ?gen.
+    	bind(strafter(str(?gen), 'steamGames#') AS ?genId).
+        FILTER(?genId = "${idGenre}").
+}`
+    var encoded = encodeURIComponent(prefixes + query)
+
+    try {
+        var response = await axios.get(getLink + encoded)
+        return Number(normalize(response.data)[0].total);
+    }
+    catch (e) {
+        throw (e)
+    }
+}
+
+Genres.getGenreGames = async function(limit = 25, page = 0, idGenre, userId){
+    page -= 1;
+    if (page == -1) page = 0;
+
     var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?g a :Game.
     	?g :hasGenre ?gen.
@@ -68,7 +88,11 @@ Genres.getGenreGames = async function(idGenre, userId){
         ?sale :salePrice ?salePrice.
         ?sale :discount ?discount.
     }
-}` 
+}
+    orderby DESC(?rdate)
+    limit ${limit}
+    offset ${page * limit}`
+
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -93,7 +117,9 @@ Genres.getGenreGames = async function(idGenre, userId){
             if (wishGames.includes(gameList[i].id)) 
               gameList[i].inWishlist = "1";            
         }
-        return gameList
+
+        let total = await getTotalGames(idGenre);
+        return { total, data: gameList }
     }
     catch(e){
         throw(e)

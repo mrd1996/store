@@ -45,7 +45,27 @@ Devs.getDevsList = async function(limit = 25, page = 0){
     }
 }
 
-Devs.getDevGames = async function(idDev, userId){
+async function getTotalGames(idDev) {
+    var query = `select (count(?g) as ?total) where {
+        ?d a :Developer.
+        bind(strafter(str(?d), 'steamGames#') AS ?dev).
+        FILTER(?dev = "${idDev}").
+        ?d :isDeveloperOf ?g.
+}`
+    var encoded = encodeURIComponent(prefixes + query)
+
+    try {
+        var response = await axios.get(getLink + encoded)
+        return Number(normalize(response.data)[0].total);
+    }
+    catch (e) {
+        throw (e)
+    }
+}
+
+Devs.getDevGames = async function(limit = 25, page = 0, idDev, userId){
+    page -= 1;
+    if (page == -1) page = 0;
 
     var query = `select ?dev ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?d a :Developer.
@@ -71,7 +91,11 @@ Devs.getDevGames = async function(idDev, userId){
          ?sale :salePrice ?salePrice.
         ?sale :discount ?discount.
     }
-}`
+}
+    orderby DESC(?rdate)
+    limit ${limit}
+    offset ${page * limit}`
+    
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -96,7 +120,9 @@ Devs.getDevGames = async function(idDev, userId){
             if (wishGames.includes(gameList[i].id)) 
               gameList[i].inWishlist = "1";            
         }
-        return gameList
+
+        let total = await getTotalGames(idDev);
+        return { total, data: gameList }
     }
     catch(e){
         throw(e)

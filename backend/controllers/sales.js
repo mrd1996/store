@@ -24,8 +24,25 @@ var prefixes = `
 var getLink = "http://localhost:7200/repositories/test" + "?query="
 var postLink = "http://localhost:7200/repositories/test/statements" + "?update="
 
+async function getTotalGames() {
+    var query = `select (count(?g) as ?total) where {
+        ?s a :Sale.
+    	?s :isSaleOf ?g.
+}`
+    var encoded = encodeURIComponent(prefixes + query)
 
-Sales.getSaleGames = async function (userId) {
+    try {
+        var response = await axios.get(getLink + encoded)
+        return Number(normalize(response.data)[0].total);
+    }
+    catch (e) {
+        throw (e)
+    }
+}
+
+Sales.getSaleGames = async function (limit = 25, page = 0, userId) {
+    page -= 1;
+    if (page == -1) page = 0;
 
     var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?s a :Sale.
@@ -46,7 +63,11 @@ Sales.getSaleGames = async function (userId) {
         optional {
             ?g :website ?site.
         } 
-}`
+}
+    orderby DESC(?rdate)
+    limit ${limit}
+    offset ${page * limit}`
+
     var encoded = encodeURIComponent(prefixes + query)
 
     try {
@@ -71,7 +92,9 @@ Sales.getSaleGames = async function (userId) {
             if (wishGames.includes(gameList[i].id)) 
               gameList[i].inWishlist = "1";            
         }
-        return gameList
+
+        let total = await getTotalGames();
+        return { total, data: gameList }
     }
     catch (e) {
         throw (e)

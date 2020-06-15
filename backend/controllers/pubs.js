@@ -45,7 +45,27 @@ Pubs.getPubsList = async function(limit = 25, page = 0){
     }
 }
 
-Pubs.getPubGames = async function(idPub, userId){
+async function getTotalGames(idPub) {
+    var query = `select (count(?g) as ?total) where {
+        ?p a :Publisher.
+        bind(strafter(str(?p), 'steamGames#') AS ?pub).
+    	FILTER(?pub = "${idPub}").
+    	?p :isPublisherOf ?g.
+}`
+    var encoded = encodeURIComponent(prefixes + query)
+
+    try {
+        var response = await axios.get(getLink + encoded)
+        return Number(normalize(response.data)[0].total);
+    }
+    catch (e) {
+        throw (e)
+    }
+}
+
+Pubs.getPubGames = async function(limit = 25, page = 0, idPub, userId){
+    page -= 1;
+    if (page == -1) page = 0;
 
     var query = `select ?pub ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
         ?p a :Publisher.
@@ -71,7 +91,11 @@ Pubs.getPubGames = async function(idPub, userId){
      	?sale :salePrice ?salePrice.
         ?sale :discount ?discount.
     }
-}`
+}
+    orderby DESC(?rdate)
+    limit ${limit}
+    offset ${page * limit}`
+
     var encoded = encodeURIComponent(prefixes + query)
 
     try{
@@ -96,7 +120,9 @@ Pubs.getPubGames = async function(idPub, userId){
             if (wishGames.includes(gameList[i].id)) 
               gameList[i].inWishlist = "1";            
         }
-        return gameList
+
+        let total = await getTotalGames(idPub);
+        return { total, data: gameList }
     }
     catch(e){
         throw(e)
