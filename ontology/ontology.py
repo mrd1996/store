@@ -1,10 +1,6 @@
 import pandas as pd
 import re
 
-# 455341
-# 469772
-# 698320
-# 701944
 
 globalCsv = pd.read_csv("data/steam.csv")
 
