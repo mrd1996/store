@@ -1,0 +1,74 @@
+<template>
+  <div>
+    <v-col
+      v-for="game in currentPage"
+      :key="game.id"
+      class="d-flex child-flex"
+      cols="4"
+    >
+      <v-hover v-slot:default="{ hover }">
+        <v-card flat class="d-flex rounded-card">
+          <v-img
+            :src="game.image"
+            :aspect-ratio="14 / 9"
+            class="grey lighten-2"
+          >
+            <template v-slot:placeholder>
+              <v-row class="fill-height ma-0" align="center" justify="center">
+                <v-progress-circular
+                  indeterminate
+                  color="grey lighten-5"
+                ></v-progress-circular>
+              </v-row>
+            </template>
+            <v-expand-transition>
+              <div
+                v-if="hover"
+                class="d-flex transition-fast-in-fast-out orange darken-2 v-card--reveal display-3 white--text"
+                style="height: 30%;"
+              >
+                <v-btn
+                  v-if="user.library.findIndex(libg => libg.id == game.id) > -1"
+                  icon
+                  @click="
+                    remGameLibrary({
+                      id: user.uid,
+                      token: user.token,
+                      gameId: game.id,
+                    })
+                  "
+                >
+                  <v-icon large>mdi-bookmark</v-icon>
+                </v-btn>
+                <v-btn
+                  v-else
+                  icon
+                  @click="
+                    addGameLibrary({
+                      id: user.uid,
+                      token: user.token,
+                      gameId: game.id,
+                    })
+                  "
+                >
+                  <v-icon large>mdi-bookmark-outline</v-icon>
+                </v-btn>
+                <v-btn icon>
+                  <v-icon large>mdi-star-outline</v-icon>
+                </v-btn>
+              </div>
+            </v-expand-transition>
+          </v-img>
+        </v-card>
+      </v-hover>
+    </v-col>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ["currentPage", "library"],
+};
+</script>
+
+<style></style>
