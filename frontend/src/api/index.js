@@ -4,8 +4,16 @@ const API = "http://localhost:3000";
 
 export function getGames(token, page = 1, limit = 25) {
   return axios
-    .get(`${API}/games`, {
+    .get(`${API}/sales`, {
       params: { limit, page },
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(({ data }) => data);
+}
+
+export function getGame(token, gameid) {
+  return axios
+    .get(`${API}/games/${gameid}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then(({ data }) => data);
@@ -58,9 +66,13 @@ export function library(id, token) {
 
 export function addLib(id, token, gamesId) {
   return axios
-    .post(`${API}/users/${id}/library`, {gamesId}, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    .post(
+      `${API}/users/${id}/library`,
+      { gamesId },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
     .then(({ data }) => data);
 }
 
@@ -68,7 +80,7 @@ export function removeLib(id, token, gamesId) {
   return axios
     .delete(
       `${API}/users/${id}/library`,
-      { data: {gamesId} },
+      { data: { gamesId } },
       {
         headers: { Authorization: `Bearer ${token}` },
       }

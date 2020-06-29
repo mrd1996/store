@@ -3,35 +3,55 @@
     <v-col cols="12">
       <v-container fluid class="pa-0">
         <v-row no>
-          <v-col
-            v-for="game in currentPage"
-            :key="game.id"
-            class="d-flex child-flex"
-            cols="4"
-          >
+          <v-col v-for="game in currentPage" :key="game.id" class="d-flex child-flex" cols="4">
             <v-hover v-slot:default="{ hover }">
-              <v-card flat class="d-flex rounded-card">
+              <v-card
+                flat
+                class="rounded-bottom"
+                style="background-color: rgb(60, 63, 87); overflow: hidden"
+              >
+                <v-card dark flat color="black" class="pa-2">
+                  <span
+                    class="subtitle-1 pa-1 rounded-card font-weight-regular mr-3"
+                    style="color: #a4d007; background: #4c6b22; position:relative; z-index:2"
+                  >{{ game.discount }}</span>
+                  <span
+                    class="heading-6 pa-1 font-weight-bold"
+                    style="position:relative; z-index:2"
+                  >{{ game.salePrice }}€</span>
+                  <v-icon
+                    v-if="game.inLibrary"
+                    medium
+                    class="float-right"
+                    style="z-index:2"
+                  >mdi-bookmark</v-icon>
+                  <v-icon
+                    v-if="game.inWishlist"
+                    medium
+                    class="float-right"
+                    style="z-index:2"
+                  >mdi-star</v-icon>
+
+                  <div class="top-card" :style="`background-image: url(\'${game.image}');`"></div>
+                  <div
+                    style="background-color: rgba(70, 72, 82, 0.6); position: absolute; height: 100%; width: 100%; left:0; top:0"
+                  ></div>
+                </v-card>
                 <v-img
+                  @click="$router.push(`/game/${game.id}`)"
                   :src="game.image"
-                  :aspect-ratio="14 / 9"
+                  :aspect-ratio="2.1"
                   class="grey lighten-2"
                 >
                   <template v-slot:placeholder>
-                    <v-row
-                      class="fill-height ma-0"
-                      align="center"
-                      justify="center"
-                    >
-                      <v-progress-circular
-                        indeterminate
-                        color="grey lighten-5"
-                      ></v-progress-circular>
+                    <v-row class="fill-height ma-0" align="center" justify="center">
+                      <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
                     </v-row>
                   </template>
                   <v-expand-transition>
                     <div
                       v-if="hover"
-                      class="d-flex transition-fast-in-fast-out orange darken-2 v-card--reveal display-3 white--text"
+                      class="d-flex transition-fast-in-fast-out light-blue darken-2 v-card--reveal display-3 white--text"
                       style="height: 30%;"
                     >
                       <v-btn v-if="game.inLibrary" icon @click="remToLib(game)">
@@ -40,11 +60,7 @@
                       <v-btn v-else icon @click="addToLib(game)">
                         <v-icon large>mdi-bookmark-outline</v-icon>
                       </v-btn>
-                      <v-btn
-                        v-if="game.inWishlist"
-                        icon
-                        @click="remToWish(game)"
-                      >
+                      <v-btn v-if="game.inWishlist" icon @click="remToWish(game)">
                         <v-icon large>mdi-star</v-icon>
                       </v-btn>
                       <v-btn v-else icon @click="addToWish(game)">
@@ -57,13 +73,7 @@
             </v-hover>
           </v-col>
 
-          <v-pagination
-            v-model="page"
-            :length="pageTotal"
-            dark
-            total-visible="7"
-            color="#3c3f57"
-          ></v-pagination>
+          <v-pagination v-model="page" :length="pageTotal" dark total-visible="7" color="#3c3f57"></v-pagination>
         </v-row>
       </v-container>
     </v-col>
@@ -82,7 +92,7 @@ export default {
       pageList: [],
       currentPage: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       page: 1,
-      pageTotal: 1,
+      pageTotal: 1
     };
   },
   methods: {
@@ -93,7 +103,7 @@ export default {
       this.addGameLibrary({
         id: this.user.uid,
         token: this.user.token,
-        gameId: game.id,
+        gameId: game.id
       }).then(() => {
         getGames(this.user.token, this.page, pageSize).then(data => {
           this.currentPage = data.data;
@@ -106,7 +116,7 @@ export default {
       this.remGameLibrary({
         id: this.user.uid,
         token: this.user.token,
-        gameId: game.id,
+        gameId: game.id
       }).then(() => {
         getGames(this.user.token, this.page, pageSize).then(data => {
           this.currentPage = data.data;
@@ -119,7 +129,7 @@ export default {
       this.addGameWishlist({
         id: this.user.uid,
         token: this.user.token,
-        gameId: game.id,
+        gameId: game.id
       }).then(() => {
         getGames(this.user.token, this.page, pageSize).then(data => {
           this.currentPage = data.data;
@@ -132,7 +142,7 @@ export default {
       this.remGameWishlist({
         id: this.user.uid,
         token: this.user.token,
-        gameId: game.id,
+        gameId: game.id
       }).then(() => {
         getGames(this.user.token, this.page, pageSize).then(data => {
           this.currentPage = data.data;
@@ -148,8 +158,8 @@ export default {
       "addGameLibrary",
       "remGameLibrary",
       "addGameWishlist",
-      "remGameWishlist",
-    ]),
+      "remGameWishlist"
+    ])
   },
   mounted() {
     getGames(this.user.token, this.page, pageSize).then(data => {
@@ -167,12 +177,12 @@ export default {
         this.pageList[this.page] = data.data;
         this.pageTotal = Math.ceil(data.total / pageSize);
       });
-    },
+    }
   },
   computed: {
     ...mapState(["user"]),
-    ...mapState({ library: state => state.user.library }),
-  },
+    ...mapState({ library: state => state.user.library })
+  }
 };
 </script>
 
@@ -184,5 +194,22 @@ export default {
   opacity: 0.9;
   position: absolute;
   width: 100%;
+}
+
+.rounded-bottom {
+  border-bottom-left-radius: 10px !important;
+  border-bottom-right-radius: 10px !important;
+}
+
+.top-card {
+  background-position: top center;
+  width: 120%;
+  height: 120%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-size: cover;
+  filter: blur(8px);
+  transform: scaleY(-1);
 }
 </style>
