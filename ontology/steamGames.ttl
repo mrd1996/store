@@ -104,8 +104,64 @@
 #    Data properties
 #################################################################
 
+###  http://prc.di.uminho.pt/steamGames#achievements
+:achievements rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#averagePlaytime
+:averagePlaytime rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#description
+:description rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#discount
+:discount rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#email
+:email rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#id
+:id rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#image
+:image rdf:type owl:DatatypeProperty .
+
+
 ###  http://prc.di.uminho.pt/steamGames#name
 :name rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#password
+:password rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#price
+:price rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#rating
+:rating rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#releaseDate
+:releaseDate rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#salePrice
+:salePrice rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#username
+:username rdf:type owl:DatatypeProperty .
+
+
+###  http://prc.di.uminho.pt/steamGames#website
+:website rdf:type owl:DatatypeProperty .
 
 
 #################################################################
