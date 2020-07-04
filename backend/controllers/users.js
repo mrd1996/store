@@ -1,5 +1,6 @@
 var Users = module.exports
 const axios = require('axios')
+var Games = require("../controllers/games")
 
 function normalize(r){
     return r.results.bindings.map(o => {
@@ -88,7 +89,15 @@ Users.getUserWishlist = async function(id){
     var encoded = encodeURIComponent(prefixes + query)
     try{
         var response = await axios.get(getLink + encoded)
-        return normalize(response.data)
+        var gameList = normalize(response.data)
+
+        for (var i = 0; i < gameList.length; i++) {
+            var categories = await Games.getGameCategories(gameList[i].id)
+            var genres = await Games.getGameGenres(gameList[i].id)
+            gameList[i].categories = categories
+            gameList[i].genres = genres    
+        }  
+        return gameList
     }
     catch(e){
         throw(e)
@@ -121,7 +130,15 @@ Users.getWishlistSales = async function(id){
     var encoded = encodeURIComponent(prefixes + query)
     try{
         var response = await axios.get(getLink + encoded)
-        return normalize(response.data)
+        var gameList = normalize(response.data)
+
+        for (var i = 0; i < gameList.length; i++) {
+            var categories = await Games.getGameCategories(gameList[i].id)
+            var genres = await Games.getGameGenres(gameList[i].id)
+            gameList[i].categories = categories
+            gameList[i].genres = genres    
+        }  
+        return gameList
     }
     catch(e){
         throw(e)
@@ -156,7 +173,15 @@ Users.getUserLibrary = async function(id){
     var encoded = encodeURIComponent(prefixes + query)
     try{
         var response = await axios.get(getLink + encoded)
-        return normalize(response.data)
+        var gameList = normalize(response.data)
+
+        for (var i = 0; i < gameList.length; i++) {
+            var categories = await Games.getGameCategories(gameList[i].id)
+            var genres = await Games.getGameGenres(gameList[i].id)
+            gameList[i].categories = categories
+            gameList[i].genres = genres    
+        }  
+        return gameList
     }
     catch(e){
         throw(e)
