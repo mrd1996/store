@@ -96,14 +96,14 @@ router.post("/:id/library", async (req, res) => {
 
   for (game of gamesId) {
     try {
-      Users.removeWishlist(req.params.id, game);
+      await Users.removeWishlist(req.params.id, game);
       await Users.insertLibrary(req.params.id, game);
-      Users.getUserLibrary(req.params.id).then(dados => res.jsonp(dados));
+      var lib = await Users.getUserLibrary(req.params.id)
+      res.status(200).jsonp(lib);
     } catch (e) {
       res.status(500).send(`Erro ao inserir na library ${req.params.id}: ${e}`);
     }
   }
-  // res.status(200).jsonp({ status: "Games added to library" });
 });
 
 // DELETE GAMES IN LIBRARY
@@ -117,12 +117,12 @@ router.delete("/:id/library", async (req, res) => {
   for (game of gamesId) {
     try {
       await Users.removeLibrary(req.params.id, game);
-      Users.getUserLibrary(req.params.id).then(dados => res.jsonp(dados));
+      var lib = await Users.getUserLibrary(req.params.id)
+      res.status(200).jsonp(lib);
     } catch (e) {
       res.status(500).send(`Erro ao remover da library ${req.params.id}: ${e}`);
     }
   }
-  // res.status(200).jsonp({ status: "Games removed from library" });
 });
 
 // POST Login

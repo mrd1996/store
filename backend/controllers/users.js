@@ -92,10 +92,20 @@ Users.getUserWishlist = async function(id){
         var gameList = normalize(response.data)
 
         for (var i = 0; i < gameList.length; i++) {
-            var categories = await Games.getGameCategories(gameList[i].id)
-            var genres = await Games.getGameGenres(gameList[i].id)
+            var id = gameList[i].id
+            var categories = await Games.getGameCategories(id)
+            var genres = await Games.getGameGenres(id)
+            var devs = await Games.getGameDevs(id)
+            var pubs = await Games.getGamePubs(id)
+            var platforms = await Games.getGamePlatforms(id)
+            var sale = await Games.getGameSale(id)
+
             gameList[i].categories = categories
-            gameList[i].genres = genres    
+            gameList[i].genres = genres
+            gameList[i].devs = devs
+            gameList[i].pubs = pubs
+            gameList[i].platforms = platforms
+            gameList[i].sale = sale          
         }  
         return gameList
     }
@@ -133,10 +143,20 @@ Users.getWishlistSales = async function(id){
         var gameList = normalize(response.data)
 
         for (var i = 0; i < gameList.length; i++) {
-            var categories = await Games.getGameCategories(gameList[i].id)
-            var genres = await Games.getGameGenres(gameList[i].id)
+            var id = gameList[i].id
+            var categories = await Games.getGameCategories(id)
+            var genres = await Games.getGameGenres(id)
+            var devs = await Games.getGameDevs(id)
+            var pubs = await Games.getGamePubs(id)
+            var platforms = await Games.getGamePlatforms(id)
+            var sale = await Games.getGameSale(id)
+
             gameList[i].categories = categories
-            gameList[i].genres = genres    
+            gameList[i].genres = genres
+            gameList[i].devs = devs
+            gameList[i].pubs = pubs
+            gameList[i].platforms = platforms
+            gameList[i].sale = sale    
         }  
         return gameList
     }
@@ -176,10 +196,20 @@ Users.getUserLibrary = async function(id){
         var gameList = normalize(response.data)
 
         for (var i = 0; i < gameList.length; i++) {
-            var categories = await Games.getGameCategories(gameList[i].id)
-            var genres = await Games.getGameGenres(gameList[i].id)
+            var id = gameList[i].id
+            var categories = await Games.getGameCategories(id)
+            var genres = await Games.getGameGenres(id)
+            var devs = await Games.getGameDevs(id)
+            var pubs = await Games.getGamePubs(id)
+            var platforms = await Games.getGamePlatforms(id)
+            var sale = await Games.getGameSale(id)
+
             gameList[i].categories = categories
-            gameList[i].genres = genres    
+            gameList[i].genres = genres
+            gameList[i].devs = devs
+            gameList[i].pubs = pubs
+            gameList[i].platforms = platforms
+            gameList[i].sale = sale    
         }  
         return gameList
     }
