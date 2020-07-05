@@ -10,15 +10,28 @@
                 class="rounded-bottom"
                 style="background-color: rgb(60, 63, 87); overflow: hidden"
               >
-                <v-card dark flat color="black" class="pa-2">
+                <v-card
+                  @click="$router.push(`/game/${game.id}`)"
+                  dark
+                  flat
+                  color="black"
+                  class="pa-2"
+                >
                   <span
+                    v-if="game.discount"
                     class="subtitle-1 pa-1 rounded-card font-weight-regular mr-3"
                     style="color: #a4d007; background: #4c6b22; position:relative; z-index:2"
                   >{{ game.discount }}</span>
                   <span
+                    v-if="game.salePrice"
                     class="heading-6 pa-1 font-weight-bold"
                     style="position:relative; z-index:2"
                   >{{ game.salePrice }}€</span>
+                  <span
+                    v-else
+                    class="heading-6 pa-1 font-weight-bold"
+                    style="position:relative; z-index:2"
+                  >{{ game.price }}€</span>
                   <v-icon
                     v-if="game.inLibrary"
                     medium
@@ -37,12 +50,7 @@
                     style="background-color: rgba(70, 72, 82, 0.6); position: absolute; height: 100%; width: 100%; left:0; top:0"
                   ></div>
                 </v-card>
-                <v-img
-                  @click="$router.push(`/game/${game.id}`)"
-                  :src="game.image"
-                  :aspect-ratio="2.1"
-                  class="grey lighten-2"
-                >
+                <v-img :src="game.image" :aspect-ratio="2.1" class="grey lighten-2">
                   <template v-slot:placeholder>
                     <v-row class="fill-height ma-0" align="center" justify="center">
                       <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
@@ -82,7 +90,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import { getGames } from "../api";
+// import { getSales } from "../api";
 
 const pageSize = 9;
 
@@ -95,9 +103,12 @@ export default {
       pageTotal: 1
     };
   },
+  props: {
+    method: { type: Function }
+  },
   methods: {
     async getGamesList() {
-      this.currentPage = await getGames(this.user.token);
+      this.currentPage = await this.method(this.user.token);
     },
     addToLib(game) {
       this.addGameLibrary({
@@ -105,7 +116,7 @@ export default {
         token: this.user.token,
         gameId: game.id
       }).then(() => {
-        getGames(this.user.token, this.page, pageSize).then(data => {
+        this.method(this.user.token, this.page, pageSize).then(data => {
           this.currentPage = data.data;
           this.pageList[this.page] = data.data;
           this.pageTotal = Math.ceil(data.total / pageSize);
@@ -118,7 +129,7 @@ export default {
         token: this.user.token,
         gameId: game.id
       }).then(() => {
-        getGames(this.user.token, this.page, pageSize).then(data => {
+        this.method(this.user.token, this.page, pageSize).then(data => {
           this.currentPage = data.data;
           this.pageList[this.page] = data.data;
           this.pageTotal = Math.ceil(data.total / pageSize);
@@ -131,7 +142,7 @@ export default {
         token: this.user.token,
         gameId: game.id
       }).then(() => {
-        getGames(this.user.token, this.page, pageSize).then(data => {
+        this.method(this.user.token, this.page, pageSize).then(data => {
           this.currentPage = data.data;
           this.pageList[this.page] = data.data;
           this.pageTotal = Math.ceil(data.total / pageSize);
@@ -144,7 +155,7 @@ export default {
         token: this.user.token,
         gameId: game.id
       }).then(() => {
-        getGames(this.user.token, this.page, pageSize).then(data => {
+        this.method(this.user.token, this.page, pageSize).then(data => {
           this.currentPage = data.data;
           this.pageList[this.page] = data.data;
           this.pageTotal = Math.ceil(data.total / pageSize);
@@ -162,7 +173,7 @@ export default {
     ])
   },
   mounted() {
-    getGames(this.user.token, this.page, pageSize).then(data => {
+    this.method(this.user.token, this.page, pageSize).then(data => {
       this.currentPage = data.data;
       this.pageList[this.page] = data.data;
       this.pageTotal = Math.ceil(data.total / pageSize);
@@ -172,7 +183,7 @@ export default {
     page: function() {
       if (this.pageList[this.page])
         return (this.currentPage = this.pageList[this.page]);
-      getGames(this.user.token, this.page, pageSize).then(data => {
+      this.method(this.user.token, this.page, pageSize).then(data => {
         this.currentPage = data.data;
         this.pageList[this.page] = data.data;
         this.pageTotal = Math.ceil(data.total / pageSize);

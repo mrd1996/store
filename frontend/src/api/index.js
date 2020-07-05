@@ -2,9 +2,18 @@ import axios from "axios";
 
 const API = "http://localhost:3000";
 
-export function getGames(token, page = 1, limit = 25) {
+export function getSales(token, page = 1, limit = 25) {
   return axios
     .get(`${API}/sales`, {
+      params: { limit, page },
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(({ data }) => data);
+}
+
+export function getGames(token, page = 1, limit = 25) {
+  return axios
+    .get(`${API}/games`, {
       params: { limit, page },
       headers: { Authorization: `Bearer ${token}` },
     })

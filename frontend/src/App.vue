@@ -4,14 +4,12 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <v-app-bar  color="#313249" dark flat>
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+    <v-app-bar color="#313249" dark flat>
+      <v-app-bar-nav-icon @click="$router.push('/')"></v-app-bar-nav-icon>
 
-      <v-btn text class="text-none title-btn">Store</v-btn>
+      <v-btn @click="$router.push('/store')" text class="text-none title-btn">Store</v-btn>
 
-      <v-btn text class="text-none title-btn">Library</v-btn>
-
-      <v-btn text class="text-none title-btn">Comunity</v-btn>
+      <v-btn @click="$router.push('/library')" text class="text-none title-btn">Library</v-btn>
 
       <v-spacer></v-spacer>
 
@@ -52,7 +50,6 @@ import Gallery from "./components/gallery";
 import RegisterPage from "./components/RegisterPage";
 import { mapActions, mapState } from "vuex";
 
-
 export default {
   name: "App",
 
@@ -67,7 +64,7 @@ export default {
   data: () => ({
     //
   }),
-  computed: mapState(["user"]),
+  computed: mapState(["user"])
 };
 </script>
 
