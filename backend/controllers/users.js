@@ -166,7 +166,7 @@ Users.getWishlistSales = async function(id){
 }
 
 Users.getUserLibrary = async function(id){
-    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount where {
+    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site (GROUP_CONCAT(distinct ?cat;SEPARATOR=",") AS ?categorys) (GROUP_CONCAT(distinct ?gen;SEPARATOR=",") AS ?genres) (GROUP_CONCAT(distinct ?dev;SEPARATOR=",") AS ?devs) (GROUP_CONCAT(distinct ?pub;SEPARATOR=",") AS ?pubs) (GROUP_CONCAT(distinct ?plat;SEPARATOR=",") AS ?platforms) ?salePrice ?discount where {
         ?u a :User.
     	?u :id "${id}".
     	?u :owns ?g.
@@ -178,6 +178,17 @@ Users.getUserLibrary = async function(id){
         ?g :releaseDate ?rdate.
         ?g :achievements ?trophys.
         ?g :averagePlaytime ?avgPlayTime.
+    	?g :hasCategory ?c.
+    	?c :name ?cat.
+    	?g :hasGenre ?gnr.
+    	?gnr :name ?gen.
+    	?g :hasDeveloper ?d.
+    	?d :name ?dev.
+    	?g :hasPublisher ?p.
+    	?p :name ?pub.
+    	?g :hasPlatform ?pla.
+    	?pla :name ?plat.
+    	
         optional {
             ?g :image ?image.
         }
@@ -189,29 +200,27 @@ Users.getUserLibrary = async function(id){
         ?sale :salePrice ?salePrice.
         ?sale :discount ?discount.
     }
-}` 
+} group by ?id ?name ?desc ?price ?rating ?rdate ?trophys ?avgPlayTime ?image ?site ?salePrice ?discount ?dev` 
+
     var encoded = encodeURIComponent(prefixes + query)
     try{
         var response = await axios.get(getLink + encoded)
-        var gameList = normalize(response.data)
+        var games = normalize(response.data)
 
-        for (var i = 0; i < gameList.length; i++) {
-            var id = gameList[i].id
-            var categories = await Games.getGameCategories(id)
-            var genres = await Games.getGameGenres(id)
-            var devs = await Games.getGameDevs(id)
-            var pubs = await Games.getGamePubs(id)
-            var platforms = await Games.getGamePlatforms(id)
-            var sale = await Games.getGameSale(id)
+        for(g of games){
+            var data_cat = g.categorys.split(",")
+            var data_gen = g.genres.split(",")
+            var data_dev = g.devs.split(",")
+            var data_pubs = g.pubs.split(",")
+            var data_plat = g.platforms.split(",")
 
-            gameList[i].categories = categories
-            gameList[i].genres = genres
-            gameList[i].devs = devs
-            gameList[i].pubs = pubs
-            gameList[i].platforms = platforms
-            gameList[i].sale = sale    
-        }  
-        return gameList
+            g.categorys = JSON.parse(JSON.stringify(data_cat));
+            g.genres = JSON.parse(JSON.stringify(data_gen));
+            g.devs = JSON.parse(JSON.stringify(data_dev));
+            g.pubs = JSON.parse(JSON.stringify(data_pubs));
+            g.platforms = JSON.parse(JSON.stringify(data_plat));            
+        }
+        return games
     }
     catch(e){
         throw(e)
