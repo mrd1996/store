@@ -22,11 +22,44 @@ function normalizeID(r) {
     })
 }
 
-async function getTotalGames() {
+async function getTotalGames(category,genre) {
+
     var query = `select (count(*) as ?total) where {
         ?g a :Game.
     }`
-    var encoded = encodeURIComponent(prefixes + query)
+
+    var query2 = `select (count(*) as ?total) where {
+        ?g a :Game.
+    	?g :hasCategory ?categ.
+    	bind(strafter(str(?categ), 'steamGames#') AS ?catId).
+    	FILTER(?catId = "${category}").
+    	?g :hasGenre ?gen.
+    	bind(strafter(str(?gen), 'steamGames#') AS ?genId).
+    	FILTER(?genId = "${genre}").
+    }`
+
+    var query3 = `select (count(*) as ?total) where {
+        ?g a :Game.
+    	?g :hasCategory ?categ.
+    	bind(strafter(str(?categ), 'steamGames#') AS ?catId).
+    	FILTER(?catId = "${category}").
+    }`
+
+    var query4 = `select (count(*) as ?total) where {
+        ?g a :Game.
+    	?g :hasGenre ?gen.
+    	bind(strafter(str(?gen), 'steamGames#') AS ?genId).
+    	FILTER(?genId = "${genre}").
+    }`
+
+    if(category!="" && genre!="")
+      var encoded = encodeURIComponent(prefixes + query2)
+    else if (category!="")
+      var encoded = encodeURIComponent(prefixes + query3)
+    else if (genre!="")
+      var encoded = encodeURIComponent(prefixes + query4)
+    else
+      var encoded = encodeURIComponent(prefixes + query)
 
     try {
         var response = await axios.get(getLink + encoded)
@@ -49,11 +82,11 @@ var prefixes = `
 var getLink = "http://localhost:7200/repositories/test" + "?query="
 
 
-Games.getGamesList = async function (limit = 25, page = 0, userId) {
+Games.getGamesList = async function (limit = 25, page = 0, category = "", genre = "", userId) {
     page -= 1;
     if (page == -1) page = 0;
 
-    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site ?salePrice ?discount where {
+    var query = `select ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site (GROUP_CONCAT(distinct ?plat;SEPARATOR=",") AS ?platforms) ?salePrice ?discount where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         ?g :name ?name.
@@ -64,6 +97,8 @@ Games.getGamesList = async function (limit = 25, page = 0, userId) {
         ?g :image ?image.
         ?g :achievements ?trophys.
         ?g :averagePlaytime ?avgPlayTime.
+        ?g :hasPlatform ?pla.
+        ?pla :name ?plat.
         optional {
             ?g :website ?site.
         }
@@ -72,13 +107,110 @@ Games.getGamesList = async function (limit = 25, page = 0, userId) {
         ?sale :salePrice ?salePrice.
         ?sale :discount ?discount.
     }
-}
+} group by ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site ?salePrice ?discount
   orderby DESC(?rdate)
   limit ${limit}
   offset ${page * limit}`
 
-    var encoded = encodeURIComponent(prefixes + query)
+    var query2 = `select ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site (GROUP_CONCAT(distinct ?plat;SEPARATOR=",") AS ?platforms) ?salePrice ?discount  where {
+    ?g a :Game.
+    bind(strafter(str(?g), 'steamGames#') AS ?id).
+    ?g :hasCategory ?categ.
+    bind(strafter(str(?categ), 'steamGames#') AS ?catId).
+    FILTER(?catId = "${category}").
+    ?g :hasGenre ?gen.
+    bind(strafter(str(?gen), 'steamGames#') AS ?genId).
+    FILTER(?genId = "${genre}").
+    ?g :name ?name.
+    ?g :description ?desc.
+    ?g :price ?price.
+    ?g :rating ?rating.
+    ?g :releaseDate ?rdate.
+    ?g :image ?image.
+    ?g :achievements ?trophys.
+    ?g :averagePlaytime ?avgPlayTime.
+    ?g :hasPlatform ?pla.
+    ?pla :name ?plat.
+    optional {
+        ?g :website ?site.
+    }
+optional {
+    ?g :hasSale ?sale.
+    ?sale :salePrice ?salePrice.
+    ?sale :discount ?discount.
+}
+} group by ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site ?salePrice ?discount
+orderby DESC(?rdate)
+limit ${limit}
+offset ${page * limit}`
 
+    var query3 = `select ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site (GROUP_CONCAT(distinct ?plat;SEPARATOR=",") AS ?platforms) ?salePrice ?discount  where {
+        ?g a :Game.
+        bind(strafter(str(?g), 'steamGames#') AS ?id).
+    	?g :hasCategory ?categ.
+    	bind(strafter(str(?categ), 'steamGames#') AS ?catId).
+        FILTER(?catId = "${category}").
+        ?g :name ?name.
+        ?g :description ?desc.
+        ?g :price ?price.
+        ?g :rating ?rating.
+        ?g :releaseDate ?rdate.
+        ?g :image ?image.
+        ?g :achievements ?trophys.
+        ?g :averagePlaytime ?avgPlayTime.
+    	?g :hasPlatform ?pla.
+    	?pla :name ?plat.
+        optional {
+            ?g :website ?site.
+        }
+    optional {
+        ?g :hasSale ?sale.
+        ?sale :salePrice ?salePrice.
+        ?sale :discount ?discount.
+    }
+} group by ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site ?salePrice ?discount
+  orderby DESC(?rdate)
+  limit ${limit}
+  offset ${page * limit}`
+
+    var query4 = `select ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site (GROUP_CONCAT(distinct ?plat;SEPARATOR=",") AS ?platforms) ?salePrice ?discount  where {
+    ?g a :Game.
+    bind(strafter(str(?g), 'steamGames#') AS ?id).
+    ?g :hasGenre ?gen.
+    bind(strafter(str(?gen), 'steamGames#') AS ?genId).
+    FILTER(?genId = "${genre}").
+    ?g :name ?name.
+    ?g :description ?desc.
+    ?g :price ?price.
+    ?g :rating ?rating.
+    ?g :releaseDate ?rdate.
+    ?g :image ?image.
+    ?g :achievements ?trophys.
+    ?g :averagePlaytime ?avgPlayTime.
+    ?g :hasPlatform ?pla.
+    ?pla :name ?plat.
+    optional {
+        ?g :website ?site.
+    }
+optional {
+    ?g :hasSale ?sale.
+    ?sale :salePrice ?salePrice.
+    ?sale :discount ?discount.
+}
+} group by ?id ?name ?desc ?price ?rating ?rdate ?image ?trophys ?avgPlayTime ?site ?salePrice ?discount
+  orderby DESC(?rdate)
+  limit ${limit}
+  offset ${page * limit}`
+
+  if(category!="" && genre!="")
+    var encoded = encodeURIComponent(prefixes + query2)
+  else if (category!="")
+    var encoded = encodeURIComponent(prefixes + query3)
+  else if (genre!="")
+    var encoded = encodeURIComponent(prefixes + query4)
+  else
+    var encoded = encodeURIComponent(prefixes + query)
+    
     try {
         var response = await axios.get(getLink + encoded)
 
@@ -99,10 +231,13 @@ Games.getGamesList = async function (limit = 25, page = 0, userId) {
               gameList[i].inLibrary = "1";
               
             if (wishGames.includes(gameList[i].id)) 
-              gameList[i].inWishlist = "1";            
+              gameList[i].inWishlist = "1";
+            
+            var data_plat = gameList[i].platforms.split(",")
+            gameList[i].platforms = JSON.parse(JSON.stringify(data_plat));                            
         }
-        
-        let total = await getTotalGames();
+
+        let total = await getTotalGames(category,genre);
         return { total, data: gameList }
     }
     catch (e) {
@@ -111,12 +246,13 @@ Games.getGamesList = async function (limit = 25, page = 0, userId) {
 }
 
 Games.getGameCategories = async function (idGame) {
-    var query = `select ?category where {
+    var query = `select ?cat ?category where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         FILTER(?id = "${idGame}").
-        ?g :hasCategory ?cat.
-        ?cat :name ?category.
+        ?g :hasCategory ?c.
+        bind(strafter(str(?c), 'steamGames#') AS ?cat).
+        ?c :name ?category.
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
@@ -146,12 +282,13 @@ Games.getGamesId = async function () {
 }
 
 Games.getGameGenres = async function (idGame) {
-    var query = `select ?genres where {
+    var query = `select ?gen ?genre where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         FILTER(?id = "${idGame}").
-        ?g :hasGenre ?gen.
-        ?gen :name ?genres.
+        ?g :hasGenre ?gnr.
+        bind(strafter(str(?gnr), 'steamGames#') AS ?gen).
+        ?gnr :name ?genre.
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
@@ -166,12 +303,13 @@ Games.getGameGenres = async function (idGame) {
 
 
 Games.getGamePlatforms = async function (idGame) {
-    var query = `select ?platforms where {
+    var query = `select ?plt ?platform where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         FILTER(?id = "${idGame}").
-        ?g :hasPlatform ?plt.
-        ?plt :name ?platforms.
+        ?g :hasPlatform ?p.
+        bind(strafter(str(?p), 'steamGames#') AS ?plt).
+        ?p :name ?platform.
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
@@ -186,12 +324,13 @@ Games.getGamePlatforms = async function (idGame) {
 
 
 Games.getGameDevs = async function (idGame) {
-    var query = `select ?devs where {
+    var query = `select ?dev ?developer where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         FILTER(?id = "${idGame}").
-        ?g :hasDeveloper ?dev.
-        ?dev :name ?devs.
+        ?g :hasDeveloper ?d.
+        bind(strafter(str(?d), 'steamGames#') AS ?dev).
+        ?d :name ?developer.
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
@@ -205,12 +344,13 @@ Games.getGameDevs = async function (idGame) {
 }
 
 Games.getGamePubs = async function (idGame) {
-    var query = `select ?pubs where {
+    var query = `select ?pub ?publisher where {
         ?g a :Game.
         bind(strafter(str(?g), 'steamGames#') AS ?id).
         FILTER(?id = "${idGame}").
-        ?g :hasPublisher ?pub.
-        ?pub :name ?pubs.
+        ?g :hasPublisher ?p.
+        bind(strafter(str(?p), 'steamGames#') AS ?pub).
+        ?p :name ?publisher.
     }`
     var encoded = encodeURIComponent(prefixes + query)
 
