@@ -4,7 +4,7 @@
       <v-container fluid class="pa-0">
         <v-row no>
           <v-col v-for="game in currentPage" :key="game.id" class="d-flex child-flex" cols="4">
-            <v-hover v-slot:default="{ hover }">
+            <v-hover v-if="pageTotal > 0" v-slot:default="{ hover }">
               <v-card
                 flat
                 class="rounded-bottom"
@@ -81,7 +81,17 @@
             </v-hover>
           </v-col>
 
-          <v-pagination v-model="page" :length="pageTotal" dark total-visible="7" color="#3c3f57"></v-pagination>
+          <v-pagination
+            v-if="pageTotal > 0"
+            v-model="page"
+            :length="pageTotal"
+            dark
+            total-visible="7"
+            color="#3c3f57"
+          ></v-pagination>
+        </v-row>
+        <v-row>
+          <h1 v-if="pageTotal === 0" class="white--text ma-auto">No Results</h1>
         </v-row>
       </v-container>
     </v-col>
@@ -92,19 +102,19 @@
 import { mapActions, mapState } from "vuex";
 // import { getSales } from "../api";
 
-const pageSize = 9;
-
 export default {
   data() {
     return {
       pageList: [],
       currentPage: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       page: 1,
-      pageTotal: 1
+      pageTotal: 1,
+      category: ""
     };
   },
   props: {
-    method: { type: Function }
+    method: { type: Function },
+    pageSize: { type: Number, default: 9 }
   },
   methods: {
     async getGamesList() {
@@ -116,10 +126,11 @@ export default {
         token: this.user.token,
         gameId: game.id
       }).then(() => {
-        this.method(this.user.token, this.page, pageSize).then(data => {
+        this.method(this.user.token, this.page, this.pageSize).then(data => {
+          this.setWishlist({ id: this.user.uid, token: this.user.token });
           this.currentPage = data.data;
           this.pageList[this.page] = data.data;
-          this.pageTotal = Math.ceil(data.total / pageSize);
+          this.pageTotal = Math.ceil(data.total / this.pageSize);
         });
       });
     },
@@ -129,10 +140,10 @@ export default {
         token: this.user.token,
         gameId: game.id
       }).then(() => {
-        this.method(this.user.token, this.page, pageSize).then(data => {
+        this.method(this.user.token, this.page, this.pageSize).then(data => {
           this.currentPage = data.data;
           this.pageList[this.page] = data.data;
-          this.pageTotal = Math.ceil(data.total / pageSize);
+          this.pageTotal = Math.ceil(data.total / this.pageSize);
         });
       });
     },
@@ -142,10 +153,11 @@ export default {
         token: this.user.token,
         gameId: game.id
       }).then(() => {
-        this.method(this.user.token, this.page, pageSize).then(data => {
+        this.method(this.user.token, this.page, this.pageSize).then(data => {
+          this.setLibrary({ id: this.user.uid, token: this.user.token });
           this.currentPage = data.data;
           this.pageList[this.page] = data.data;
-          this.pageTotal = Math.ceil(data.total / pageSize);
+          this.pageTotal = Math.ceil(data.total / this.pageSize);
         });
       });
     },
@@ -155,10 +167,10 @@ export default {
         token: this.user.token,
         gameId: game.id
       }).then(() => {
-        this.method(this.user.token, this.page, pageSize).then(data => {
+        this.method(this.user.token, this.page, this.pageSize).then(data => {
           this.currentPage = data.data;
           this.pageList[this.page] = data.data;
-          this.pageTotal = Math.ceil(data.total / pageSize);
+          this.pageTotal = Math.ceil(data.total / this.pageSize);
         });
       });
     },
@@ -173,20 +185,29 @@ export default {
     ])
   },
   mounted() {
-    this.method(this.user.token, this.page, pageSize).then(data => {
+    this.method(this.user.token, this.page, this.pageSize).then(data => {
       this.currentPage = data.data;
       this.pageList[this.page] = data.data;
-      this.pageTotal = Math.ceil(data.total / pageSize);
+      this.pageTotal = Math.ceil(data.total / this.pageSize);
     });
   },
   watch: {
     page: function() {
       if (this.pageList[this.page])
         return (this.currentPage = this.pageList[this.page]);
-      this.method(this.user.token, this.page, pageSize).then(data => {
+      this.method(this.user.token, this.page, this.pageSize).then(data => {
         this.currentPage = data.data;
         this.pageList[this.page] = data.data;
-        this.pageTotal = Math.ceil(data.total / pageSize);
+        this.pageTotal = Math.ceil(data.total / this.pageSize);
+      });
+    },
+    method: function() {
+      this.page = 1;
+      this.pageList = [];
+      this.method(this.user.token, this.page, this.pageSize).then(data => {
+        this.currentPage = data.data;
+        this.pageList[this.page] = data.data;
+        this.pageTotal = Math.ceil(data.total / this.pageSize);
       });
     }
   },

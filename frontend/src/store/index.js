@@ -1,6 +1,14 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { login, wishlist, library, removeLib, addLib, addWish, removeWish } from "../api";
+import {
+  login,
+  wishlist,
+  library,
+  removeLib,
+  addLib,
+  addWish,
+  removeWish,
+} from "../api";
 
 Vue.use(Vuex);
 
@@ -12,6 +20,7 @@ Vue.use(Vuex);
 const state = {
   user: {
     username: null,
+    wishlist: [],
   },
 };
 

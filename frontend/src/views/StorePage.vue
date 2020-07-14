@@ -9,13 +9,25 @@
       <v-container fluid class="px-12">
         <v-row>
           <v-col cols="2">
-            <Categories />
+            <Categories @cate="changeCategory" />
           </v-col>
           <v-col cols="10">
             <v-card color="#3c3f57" class="rounded-card" flat>
-              <Searchtool />
+              <Searchtool @genre="changeGenre" @pub="changePub" @dev="changeDev" />
             </v-card>
-            <Gallery :method="galleryMethod" />
+            <Gallery v-if="!indev" :method="galleryMethod" :pageSize="15" />
+            <GalleryDev
+              v-if="indev && devType=='dev'"
+              :type="devType"
+              :method="galleryMethod"
+              :pageSize="15"
+            />
+            <GalleryDev
+              v-if="indev && devType=='pub'"
+              :type="devType"
+              :method="galleryMethod"
+              :pageSize="15"
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -31,8 +43,15 @@ import Categories from "../components/categories";
 import GameSlider from "../components/gameslider";
 import Description from "../components/description";
 import Gallery from "../components/gallery";
+import GalleryDev from "../components/galleryDev";
 import RegisterPage from "../components/RegisterPage";
-import { getGames } from "../api";
+import {
+  getGames,
+  getGamesFromCategory,
+  getGamesV2,
+  getDevelopers,
+  getPubs
+} from "../api";
 
 export default {
   name: "App",
@@ -42,12 +61,66 @@ export default {
     Categories,
     GameSlider,
     Description,
-    Gallery
+    Gallery,
+    GalleryDev
   },
 
   data: () => ({
-    galleryMethod: getGames
-  })
+    galleryMethod: getGames,
+    category: false,
+    genre: false,
+    platform: false,
+    indev: false,
+    devType: "dev",
+    propCat: false,
+    propGen: false
+  }),
+  created() {
+    this.onRouteEnter();
+  },
+  methods: {
+    changeCategory(category) {
+      if (!category !== false) {
+        category = false;
+      }
+      this.indev = false;
+      this.category = category;
+      this.galleryMethod = getGamesV2(this.category, this.genre);
+    },
+    changeGenre(genre) {
+      this.indev = false;
+      this.genre = genre;
+      this.galleryMethod = getGamesV2(this.category, this.genre);
+    },
+    changeDev() {
+      this.indev = true;
+      this.devType = "dev";
+      this.galleryMethod = getDevelopers;
+    },
+    changePub() {
+      this.indev = true;
+      this.devType = "pub";
+      this.galleryMethod = getPubs;
+    },
+    onRouteEnter() {
+      if (this.$route.params.propCat) {
+        this.changeCategory(this.$route.params.propCat);
+        return;
+      }
+      if (this.$route.params.propGen) {
+        this.changeGenre(this.$route.params.propGen);
+        return;
+      }
+      if (this.$route.params.propDev) {
+        this.changeDev();
+        return;
+      }
+      if (this.$route.params.propPub) {
+        this.changePub();
+        return;
+      }
+    }
+  }
 };
 </script>
 

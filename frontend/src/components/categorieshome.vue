@@ -7,7 +7,11 @@
     <v-divider></v-divider>
     <v-list nav dense color="#3c3f57" class="pa-5">
       <v-list-item-group v-model="item" v-on:currentCategory="$emit('input', $event.target.value)">
-        <v-list-item v-for="(item, i) in items" :key="i">
+        <v-list-item
+          v-for="(item, i) in items"
+          :key="i"
+          @click="$router.push({name: 'store', params: {propCat: item.id}})"
+        >
           <v-list-item-icon v-if="item.icon">
             <v-icon dense color="light-blue" v-text="item.icon"></v-icon>
           </v-list-item-icon>

@@ -8,7 +8,7 @@
     <v-content style="background-color: #232537">
       <v-container fluid>
         <v-row>
-          <v-col v-for="game in library" :key="game.id" cols="auto">
+          <v-col v-for="game in wishlist" :key="game.id" cols="auto">
             <v-hover v-slot:default="{ hover }">
               <v-card class="mx-auto mt-2" max-width="390" height="100%">
                 <v-expand-transition>
@@ -17,7 +17,7 @@
                     class="d-flex justify-center transition-fast-in-fast-out red darken-2 v-card--reveal display-3 white--text"
                     style="height: 5%;"
                   >
-                    <v-btn icon class="mt-1" @click="remToLib(game)">
+                    <v-btn icon class="mt-1" @click="remToWish(game)">
                       <v-icon large>mdi-delete</v-icon>
                     </v-btn>
                   </div>
@@ -71,23 +71,20 @@ import { register, login, getUser, wishlist, getGame, library } from "../api";
 export default {
   data() {
     return {
-      library: this.$store.state.user.library
+      wishlist: this.$store.state.user.wishlist
     };
   },
   computed: mapState({
-    // library: function(state) {
-    //   return state.user.library;
-    // },
     ...mapState(["user"])
   }),
   methods: {
-    remToLib(game) {
-      this.remGameLibrary({
+    remToWish(game) {
+      this.remGameWishlist({
         id: this.user.uid,
         token: this.user.token,
         gameId: game.id
       }).then(data => {
-        this.library = this.user.library;
+        this.wishlist = this.user.wishlist;
       });
     },
     ...mapActions([

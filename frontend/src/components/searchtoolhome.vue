@@ -107,15 +107,18 @@ export default {
   },
   watch: {
     selectGenre: function() {
-      this.$emit("genre", this.selectGenre);
+      this.$router.push({
+        name: "store",
+        params: { propGen: this.selectGenre }
+      });
     }
   },
   methods: {
     selectDev() {
-      this.$emit("dev");
+      this.$router.push({ name: "store", params: { propDev: true } });
     },
     selectPub() {
-      this.$emit("pub");
+      this.$router.push({ name: "store", params: { propPub: true } });
     }
   }
 };

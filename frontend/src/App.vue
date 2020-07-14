@@ -11,19 +11,11 @@
 
       <v-btn @click="$router.push('/library')" text class="text-none title-btn">Library</v-btn>
 
+      <v-btn @click="$router.push('/wishlist')" text class="text-none title-btn">Wishlist</v-btn>
+
       <v-spacer></v-spacer>
 
-      <v-btn large icon>
-        <v-icon>mdi-gamepad-variant-outline</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-bell-outline</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon color="light-green">mdi-email-outline</v-icon>
-      </v-btn>
+      <Btnsale />
 
       <v-avatar color="indigo" class="ml-3" size="36">
         <v-img
@@ -43,6 +35,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable vue/no-unused-components */
 import Searchtool from "./components/searchtool";
+import Btnsale from "./components/btnsale";
 import Categories from "./components/categories";
 import GameSlider from "./components/gameslider";
 import Description from "./components/description";
@@ -55,6 +48,7 @@ export default {
 
   components: {
     Searchtool,
+    Btnsale,
     Categories,
     GameSlider,
     Description,

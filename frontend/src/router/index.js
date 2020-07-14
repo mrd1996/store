@@ -3,8 +3,11 @@ import VueRouter from "vue-router";
 import HomePage from "../views/Homepage.vue";
 import RegisterPage from "../views/RegisterPage.vue";
 import GamePage from "../views/GamePage.vue";
+import DevPage from "../views/DevPage.vue";
+import PubPage from "../views/PubPage.vue";
 import LibraryPage from "../views/LibraryPage.vue";
 import StorePage from "../views/StorePage.vue";
+import WishlistPage from "../views/WishlistPage.vue";
 
 Vue.use(VueRouter);
 
@@ -25,6 +28,11 @@ const routes = [
     component: LibraryPage,
   },
   {
+    path: "/wishlist",
+    name: "wishlist",
+    component: WishlistPage,
+  },
+  {
     path: "/Register",
     name: "profile",
     component: RegisterPage,
@@ -33,6 +41,16 @@ const routes = [
     path: "/game/:id",
     name: "profile",
     component: GamePage,
+  },
+  {
+    path: "/dev/:id",
+    name: "dev",
+    component: DevPage,
+  },
+  {
+    path: "/pub/:id",
+    name: "pub",
+    component: PubPage,
   },
 ];
 

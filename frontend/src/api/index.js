@@ -20,12 +20,90 @@ export function getGames(token, page = 1, limit = 25) {
     .then(({ data }) => data);
 }
 
+export function getGamesV2(category, genres) {
+  var qc = "category=";
+  var qg = "genre=";
+  if (category) {
+    qc += category;
+  }
+  if (genres) {
+    qg += genres;
+  }
+  return function(token, page = 1, limit = 25) {
+    return axios
+      .get(`${API}/games?${qc}&${qg}`, {
+        params: { limit, page },
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(({ data }) => data);
+  };
+}
+
+export function getGamesFromCategory(category) {
+  return function(token, page = 1, limit = 25) {
+    return axios
+      .get(`${API}/categorys/${category}`, {
+        params: { limit, page },
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(({ data }) => data);
+  };
+}
+
 export function getGame(token, gameid) {
   return axios
     .get(`${API}/games/${gameid}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then(({ data }) => data);
+}
+
+export function getCategorys() {
+  return axios.get(`${API}/categorys`).then(({ data }) => data);
+}
+
+export function getGenres() {
+  return axios.get(`${API}/genres`).then(({ data }) => data);
+}
+
+export function getDevelopers(token, page = 1, limit = 25) {
+  return axios
+    .get(`${API}/devs`, {
+      params: { limit, page },
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(({ data }) => data);
+}
+
+export function getPubs(token, page = 1, limit = 25) {
+  return axios
+    .get(`${API}/pubs`, {
+      params: { limit, page },
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(({ data }) => data);
+}
+
+export function getDevGames(dev) {
+  return function(token, page = 1, limit = 25) {
+    return axios
+      .get(`${API}/devs/${dev}`, {
+        params: { limit, page },
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(({ data }) => data);
+  };
+}
+
+export function getPubGames(pub) {
+  return function(token, page = 1, limit = 25) {
+    return axios
+      .get(`${API}/pubs/${pub}`, {
+        params: { limit, page },
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(({ data }) => data);
+  };
 }
 
 export function register(username, email, password) {

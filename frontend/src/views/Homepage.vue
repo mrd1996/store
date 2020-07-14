@@ -9,7 +9,7 @@
       <v-container fluid class="px-12">
         <v-row>
           <v-col cols="2">
-            <Categories />
+            <Categories home />
           </v-col>
           <v-col cols="10">
             <v-card color="#3c3f57" class="rounded-card" flat>
@@ -21,7 +21,7 @@
                   <GameSlider />
                 </v-col>
                 <v-col cols="3">
-                  <Description />
+                  <Description :wish="$store.state.user.wishlist" />
                 </v-col>
               </v-row>
             </v-card>
@@ -41,6 +41,7 @@
                     color="light-blue"
                     large
                     dark
+                    @click="$router.push('/store')"
                   >
                     Browse All
                     <v-icon>mdi-chevron-right</v-icon>
@@ -59,8 +60,8 @@
 <script>
 /* eslint-disable no-unused-vars */
 /* eslint-disable vue/no-unused-components */
-import Searchtool from "../components/searchtool";
-import Categories from "../components/categories";
+import Searchtool from "../components/searchtoolhome";
+import Categories from "../components/categorieshome";
 import GameSlider from "../components/gameslider";
 import Description from "../components/description";
 import Gallery from "../components/gallery";

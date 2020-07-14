@@ -10,27 +10,9 @@
         <v-row>
           <v-col cols="12" sm="6">
             <v-form>
-              <v-text-field
-                v-model="username"
-                dark
-                filled
-                label="username"
-                single-line
-              ></v-text-field>
-              <v-text-field
-                v-model="email"
-                dark
-                filled
-                label="email"
-                single-line
-              ></v-text-field>
-              <v-text-field
-                v-model="password"
-                dark
-                filled
-                label="password"
-                single-line
-              ></v-text-field>
+              <v-text-field v-model="username" dark filled label="username" single-line></v-text-field>
+              <v-text-field v-model="email" dark filled label="email" single-line></v-text-field>
+              <v-text-field v-model="password" dark filled label="password" single-line></v-text-field>
             </v-form>
             <v-btn dark @click="register">Register</v-btn>
           </v-col>
@@ -38,24 +20,10 @@
         <v-row>
           <v-col cols="12" sm="6">
             <v-form>
-              <v-text-field
-                v-model="emaill"
-                dark
-                filled
-                label="email"
-                single-line
-              ></v-text-field>
-              <v-text-field
-                v-model="passwordl"
-                dark
-                filled
-                label="password"
-                single-line
-              ></v-text-field>
+              <v-text-field v-model="emaill" dark filled label="email" single-line></v-text-field>
+              <v-text-field v-model="passwordl" dark filled label="password" single-line></v-text-field>
             </v-form>
             <v-btn dark @click="login">Login</v-btn>
-            <p>{{ user.wishlist }}</p>
-            <p>{{ user.library }}</p>
           </v-col>
         </v-row>
       </v-container>
@@ -76,7 +44,7 @@ export default {
       emaill: "md",
       passwordl: "1",
       uid: "",
-      token: "",
+      token: ""
     };
   },
   computed: mapState(["user"]),
@@ -97,14 +65,14 @@ export default {
       console.log(this.user.wishlist);
       console.log(this.user.library);
 
-      this.$router.push('/')
+      this.$router.push("/");
       // console.log(this.uid);
 
       // console.log(await getUser(this.uid, this.token));
       // console.log(await wishlist(this.uid, this.token));
     },
-    ...mapActions(["setUser", "setWishlist", "setLibrary"]),
-  },
+    ...mapActions(["setUser", "setWishlist", "setLibrary"])
+  }
 };
 </script>
 

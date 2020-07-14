@@ -56,14 +56,16 @@ router.post("/:id/wishlist", async (req, res) => {
 
   for (game in gamesId) {
     try {
-      Users.insertWishlist(req.params.id, gamesId[game]);
+      await Users.removeLibrary(req.params.id, gamesId[game]);
+      await Users.insertWishlist(req.params.id, gamesId[game]);
+      var wish = await Users.getUserWishlist(req.params.id);
+      res.status(200).jsonp(wish);
     } catch (e) {
       res
         .status(500)
         .send(`Erro ao inserir na wishlist ${req.params.id}: ${e}`);
     }
   }
-  res.status(200).jsonp({ status: "Games added to wishlist" });
 });
 
 // DELETE GAMES IN WISHLISH
@@ -76,14 +78,15 @@ router.delete("/:id/wishlist", async (req, res) => {
 
   for (game of gamesId) {
     try {
-      Users.removeWishlist(req.params.id, game);
+      await Users.removeWishlist(req.params.id, game);
+      var wish = await Users.getUserWishlist(req.params.id);
+      res.status(200).jsonp(wish);
     } catch (e) {
       res
         .status(500)
         .send(`Erro ao remover da wishlist ${req.params.id}: ${e}`);
     }
   }
-  res.status(200).jsonp({ status: "Games removed from wishlist" });
 });
 
 // POST GAMES IN LIBRARY
@@ -98,7 +101,7 @@ router.post("/:id/library", async (req, res) => {
     try {
       await Users.removeWishlist(req.params.id, game);
       await Users.insertLibrary(req.params.id, game);
-      var lib = await Users.getUserLibrary(req.params.id)
+      var lib = await Users.getUserLibrary(req.params.id);
       res.status(200).jsonp(lib);
     } catch (e) {
       res.status(500).send(`Erro ao inserir na library ${req.params.id}: ${e}`);
@@ -117,7 +120,7 @@ router.delete("/:id/library", async (req, res) => {
   for (game of gamesId) {
     try {
       await Users.removeLibrary(req.params.id, game);
-      var lib = await Users.getUserLibrary(req.params.id)
+      var lib = await Users.getUserLibrary(req.params.id);
       res.status(200).jsonp(lib);
     } catch (e) {
       res.status(500).send(`Erro ao remover da library ${req.params.id}: ${e}`);
